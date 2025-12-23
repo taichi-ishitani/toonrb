@@ -1,0 +1,31 @@
+inherit_from:
+  - .rubocop_todo.yml
+
+AllCops:
+  TargetRubyVersion: 3.2
+  Exclude:
+    - test/**/*
+  NewCops: enable
+  SuggestExtensions: false
+
+Layout/EndOfLine:
+  EnforcedStyle: lf
+
+Naming/VariableNumber:
+  EnforcedStyle: snake_case
+  CheckSymbols: false
+
+Style/AccessorGrouping:
+  EnforcedStyle: separated
+
+Style/Alias:
+  EnforcedStyle: prefer_alias_method
+
+Style/RaiseArgs:
+  EnforcedStyle: compact
+
+Style/SymbolArray:
+  EnforcedStyle: brackets
+
+Style/WordArray:
+  EnforcedStyle: brackets

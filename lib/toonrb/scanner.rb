@@ -4,6 +4,10 @@ module Toonrb
   class Scanner
     BOOLEAN = /true|false/
 
+    NULL = /null/
+
+    NUMBER = /-?(:?0|[1-9]\d*)(:?\.\d+)?(:?e[+-]?\d+)?/i
+
     def initialize(string, filename)
       @ss = StringScanner.new(string)
       @filename = filename
@@ -23,8 +27,13 @@ module Toonrb
     def scan_token
       return if eos?
 
-      if (text, line, column = scan(BOOLEAN))
+      case
+      when (text, line, column = scan(BOOLEAN))
         create_token(:BOOLEAN, text, line, column)
+      when (text, line, column = scan(NULL))
+        create_token(:NULL, text, line, column)
+      when (text, line, column = scan(NUMBER))
+        create_token(:NUMBER, text, line, column)
       end
     end
 

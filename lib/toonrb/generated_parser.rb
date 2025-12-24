@@ -11,16 +11,16 @@ module Toonrb
 ##### State transition tables begin ###
 
 racc_action_table = [
-     2,     6,     5 ]
+     2,     8,     5,     6,     7 ]
 
 racc_action_check = [
-     1,     2,     1 ]
+     1,     2,     1,     1,     1 ]
 
 racc_action_pointer = [
-   nil,     0,     1,   nil,   nil,   nil,   nil ]
+   nil,     0,     1,   nil,   nil,   nil,   nil,   nil,   nil ]
 
 racc_action_default = [
-    -1,    -8,    -8,    -3,    -5,    -7,     7 ]
+    -1,   -10,   -10,    -3,    -5,    -7,    -8,    -9,     9 ]
 
 racc_goto_table = [
      1,     3,     4 ]
@@ -36,24 +36,28 @@ racc_goto_default = [
 
 racc_reduce_table = [
   0, 0, :racc_error,
-  0, 4, :_reduce_none,
-  0, 4, :_reduce_none,
-  2, 4, :_reduce_none,
-  0, 5, :_reduce_none,
-  1, 5, :_reduce_5,
   0, 6, :_reduce_none,
-  1, 6, :_reduce_7 ]
+  0, 6, :_reduce_none,
+  2, 6, :_reduce_none,
+  0, 7, :_reduce_none,
+  1, 7, :_reduce_5,
+  0, 8, :_reduce_none,
+  1, 8, :_reduce_7,
+  1, 8, :_reduce_8,
+  1, 8, :_reduce_9 ]
 
-racc_reduce_n = 8
+racc_reduce_n = 10
 
-racc_shift_n = 7
+racc_shift_n = 9
 
 racc_token_table = {
   false => 0,
   :error => 1,
-  :BOOLEAN => 2 }
+  :BOOLEAN => 2,
+  :NULL => 3,
+  :NUMBER => 4 }
 
-racc_nt_base = 3
+racc_nt_base = 5
 
 racc_use_result_var = true
 
@@ -78,6 +82,8 @@ Racc_token_to_s_table = [
   "$end",
   "error",
   "BOOLEAN",
+  "NULL",
+  "NUMBER",
   "$start",
   "root_objects",
   "root_object",
@@ -98,18 +104,36 @@ Racc_debug_parser = true
 
 # reduce 4 omitted
 
-module_eval(<<'.,.,', 'toon.y', 9)
+module_eval(<<'.,.,', 'toon.y', 10)
   def _reduce_5(val, _values, result)
-     @handler.push_child(val[0])
+            @handler.push_child(val[0])
+
     result
   end
 .,.,
 
 # reduce 6 omitted
 
-module_eval(<<'.,.,', 'toon.y', 12)
+module_eval(<<'.,.,', 'toon.y', 15)
   def _reduce_7(val, _values, result)
-     result = Toonrb::Nodes::Boolean.new(val[0])
+            result = Toonrb::Nodes::Boolean.new(val[0])
+
+    result
+  end
+.,.,
+
+module_eval(<<'.,.,', 'toon.y', 18)
+  def _reduce_8(val, _values, result)
+            result = Toonrb::Nodes::Null.new(val[0])
+
+    result
+  end
+.,.,
+
+module_eval(<<'.,.,', 'toon.y', 21)
+  def _reduce_9(val, _values, result)
+            result = Toonrb::Nodes::Number.new(val[0])
+
     result
   end
 .,.,

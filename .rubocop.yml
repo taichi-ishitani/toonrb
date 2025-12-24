@@ -12,6 +12,10 @@ AllCops:
 Layout/EndOfLine:
   EnforcedStyle: lf
 
+Naming/PredicateMethod:
+  AllowedMethods:
+    - to_ruby
+
 Naming/VariableNumber:
   EnforcedStyle: snake_case
   CheckSymbols: false
@@ -21,6 +25,9 @@ Style/AccessorGrouping:
 
 Style/Alias:
   EnforcedStyle: prefer_alias_method
+
+Style/EmptyCaseCondition:
+  Enabled: false
 
 Style/RaiseArgs:
   EnforcedStyle: compact

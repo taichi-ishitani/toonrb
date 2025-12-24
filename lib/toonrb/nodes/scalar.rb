@@ -1,0 +1,38 @@
+# frozen_string_literal: true
+
+module Toonrb
+  module Nodes
+    class Scalar < Node
+      def initialize(token)
+        @token = token
+        super()
+      end
+
+      attr_reader :token
+    end
+
+    class Boolean < Scalar
+      def to_ruby
+        token.text == 'true'
+      end
+    end
+
+    class Null < Scalar
+      def to_ruby
+        nil
+      end
+    end
+
+    class Number < Scalar
+      def to_ruby
+        if token.text.match?(/[.e]/i)
+          value_f = token.text.to_f
+          value_i = value_f.to_i
+          value_f == value_i ? value_i : value_f
+        else
+          token.text.to_i
+        end
+      end
+    end
+  end
+end

@@ -16,7 +16,9 @@ jobs:
           - '3.4'
           - '3.3'
           - '3.2'
-
+    env:
+      BUNDLE_WITH: 'development_common development_test'
+      BUNDLE_WITHOUT: 'development_lint development_local'
     steps:
       - name: Checkout
         uses: actions/checkout@v4

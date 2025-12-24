@@ -10,13 +10,13 @@ unless ENV.key?('CI')
   RuboCop::RakeTask.new(:rubocop)
 
   require 'bump/tasks'
-end
 
-desc 'generate Toon parser'
-file 'lib/toonrb/generated_parser.rb' => 'toon.y' do
-  sh 'racc toon.y -F -t -o lib/toonrb/generated_parser.rb'
-end
+  desc 'generate Toon parser'
+  file 'lib/toonrb/generated_parser.rb' => 'toon.y' do
+    sh 'racc toon.y -F -t -o lib/toonrb/generated_parser.rb'
+  end
 
-task test: ['lib/toonrb/generated_parser.rb']
+  task test: ['lib/toonrb/generated_parser.rb']
+end
 
 task default: :test

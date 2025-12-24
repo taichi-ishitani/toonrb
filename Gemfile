@@ -5,9 +5,10 @@ source 'https://rubygems.org'
 # Specify your gem's dependencies in toonrb.gemspec
 gemspec
 
+gem 'racc', require: false
+
 group 'development_common' do
   gem 'bundler', require: false
-  gem 'racc', require: false
   gem 'rake', require: false
 end
 

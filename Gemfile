@@ -7,6 +7,7 @@ gemspec
 
 group 'development_common' do
   gem 'bundler', require: false
+  gem 'racc', require: false
   gem 'rake', require: false
 end
 

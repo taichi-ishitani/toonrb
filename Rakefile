@@ -12,4 +12,11 @@ unless ENV.key?('CI')
   require 'bump/tasks'
 end
 
+desc 'generate Toon parser'
+file 'lib/toonrb/generated_parser.rb' => 'toon.y' do
+  sh 'racc toon.y -F -t -o lib/toonrb/generated_parser.rb'
+end
+
+task test: ['lib/toonrb/generated_parser.rb']
+
 task default: :test

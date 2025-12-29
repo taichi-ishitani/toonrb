@@ -14,14 +14,16 @@ module Toonrb
   end
 
   class Token
-    def initialize(text, kind, position)
+    def initialize(text, kind, depth, position)
       @text = text
       @kind = kind
+      @depth = depth
       @position = position
     end
 
     attr_reader :text
     attr_reader :kind
+    attr_reader :depth
     attr_reader :position
   end
 end

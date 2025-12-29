@@ -3,10 +3,14 @@
 module Toonrb
   module Nodes
     class Array < Node
-      def initialize(head_token, size, values)
+      def initialize(head_token, size)
         super(head_token)
         @size = size
-        @values = values
+        @values = []
+      end
+
+      def push_value(value)
+        @values << value
       end
 
       def to_ruby

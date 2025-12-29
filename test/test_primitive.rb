@@ -41,7 +41,10 @@ module Toonrb
     end
 
     def test_unquoted_string
-      ['hello', 'Ada_99', 'café', '你好', '🚀', 'hello 👋 world', '05', '007', '0123'].each do |string|
+      [
+        'hello', 'Ada_99', 'café', '你好', '🚀', 'hello 👋 world',
+        '05', '007', '0123'
+      ].each do |string|
         assert_equal(string, load_toon(string))
       end
     end
@@ -49,7 +52,8 @@ module Toonrb
     def test_quoted_string
       [
         '', "line1\nline2", "tab\there", "return\rcarriag", "C:\\Users\\path",
-        "say \"hello\"", 'true', 'false', 'null', '42', '-3.14', '1e-6', '05'
+        "say \"hello\"", 'true', 'false', 'null', '42', '-3.14', '1e-6', '05',
+        'foo[bar][10]'
       ].each do |string|
         escaped_string = string.gsub(/[\n\r\t\\"]/) do |c|
           c = { "\n" => 'n', "\r" => 'r', "\t" => 't', '"' => '"', '\\' => '\\' }[c]

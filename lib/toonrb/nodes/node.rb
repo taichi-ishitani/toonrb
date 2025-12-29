@@ -8,6 +8,10 @@ module Toonrb
       end
 
       attr_reader :head_token
+
+      def depth
+        head_token.depth
+      end
     end
   end
 end

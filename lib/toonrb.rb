@@ -7,8 +7,10 @@ require_relative 'toonrb/token'
 require_relative 'toonrb/nodes/node'
 require_relative 'toonrb/nodes/scalar'
 require_relative 'toonrb/nodes/array'
+require_relative 'toonrb/nodes/object'
 require_relative 'toonrb/nodes/root'
 require_relative 'toonrb/scanner'
+require_relative 'toonrb/handler'
 require_relative 'toonrb/generated_parser'
 require_relative 'toonrb/parser'
 
@@ -23,10 +25,11 @@ module Toonrb
         end
 
       scanner = Scanner.new(toon, filename)
-      parser = Parser.new(scanner)
+      hander = Handler.new
+      parser = Parser.new(scanner, hander)
 
-      result = parser.parse
-      result.to_ruby
+      output = parser.parse
+      output.to_ruby
     end
   end
 end

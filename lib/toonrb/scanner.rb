@@ -2,45 +2,59 @@
 
 module Toonrb
   class Scanner
-    L_BRACKET = /\[/
+    L_BRACKET = /\[ */
 
-    R_BRACKET = /]/
+    R_BRACKET = /] */
 
-    L_BRACE = /{/
+    L_BRACE = /{ */
 
-    R_BRACE = /}/
+    R_BRACE = /} */
 
-    COLON = /:/
+    COLON = /: */
 
-    DELIMITER = /[,\t|]/
+    D_QUOTE = /" */
 
-    BOOLEAN = /\A(?:true|false)\Z/
+    BACK_SLASH = /\\ */
 
-    NULL = /\Anull\Z/
+    DELIMITER = /[,\t|] */
 
-    NUMBER = /\A-?(?:0|[1-9]\d*)(?:\.\d+)?(?:e[+-]?\d+)?\Z/i
+    BOOLEAN = /\A(?:true|false) *\Z/
+
+    NULL = /\Anull *\Z/
+
+    NUMBER = /\A-?(?:0|[1-9]\d*)(?:\.\d+)?(?:e[+-]?\d+)? *\Z/i
 
     def initialize(string, filename)
       @ss = StringScanner.new(string)
-      @delimiter = []
       @filename = filename
       @line = 1
       @column = 1
+      @indent_depth = 0
+      end_array
     end
 
     def next_token
       token = scan_token
-      return [false, nil] unless token
+      return eos_token unless token
 
       [token.kind, token]
     end
 
-    def push_delimiter(delimiter)
-      @delimiter << delimiter
+    def default_delimiter
+      @delimiter = ','
     end
 
-    def pop_delimiter
-      @delimiter.pop
+    def delimiter(token)
+      @delimiter = token.text.strip
+    end
+
+    def end_array_header
+      @in_header = false
+    end
+
+    def end_array
+      @delimiter = nil
+      @in_header = true
     end
 
     private
@@ -48,7 +62,10 @@ module Toonrb
     def scan_token
       return if eos?
 
-      token = scan_symbol
+      token = scan_header_symbol
+      return token if token
+
+      token = scna_delimiter
       return token if token
 
       token = scan_quoted_string
@@ -94,22 +111,28 @@ module Toonrb
       @column += text.length
     end
 
-    def scan_symbol
-      char = peek(/./)
-      return unless char
+    def scan_header_symbol
+      return unless @in_header
 
       {
         L_BRACKET: L_BRACKET, R_BRACKET: R_BRACKET,
-        L_BRACE: L_BRACE, R_BRACE: R_BRACE, COLON: COLON, DELIMITER: DELIMITER
+        L_BRACE: L_BRACE, R_BRACE: R_BRACE, COLON: COLON
       }.each do |kind, symbol|
-        next unless symbol.match?(char)
+        char, line, column = scan(symbol)
+        next unless char
 
-        token = create_token(kind, char, @line, @column)
-        advance(char)
+        token = create_token(kind, char, line, column)
         return token
       end
 
       nil
+    end
+
+    def scna_delimiter
+      char, line, column = scan(DELIMITER)
+      return unless char
+
+      create_token(:DELIMITER, char, line, column)
     end
 
     def scan_quoted_string
@@ -155,7 +178,7 @@ module Toonrb
 
       buffer = []
       while (char = peek(/./))
-        break if match_header_symbol?(char) || match_eol?(char) || match_delimiter?(char)
+        break unless valid_unquoted_char?(char)
 
         advance(char)
         buffer << char
@@ -169,23 +192,36 @@ module Toonrb
       create_token(:UNQUOTED_STRING, text, line, column)
     end
 
-    def match_header_symbol?(char)
-      [L_BRACKET, R_BRACKET, L_BRACE, R_BRACE, COLON].any? { |symbol| symbol.match?(char) }
-    end
+    def valid_unquoted_char?(char)
+      return false if char == "\n" || (@delimiter && char == @delimiter)
 
-    def match_eol?(char)
-      char == "\n"
-    end
+      {
+        L_BRACKET: L_BRACKET, R_BRACKET: R_BRACKET, L_BRACE: L_BRACE,
+        R_BRACE: R_BRACE, COLON: COLON, D_QUOTE: D_QUOTE, BACK_SLASH: BACK_SLASH
+      }.each do |kind, symbol|
+        next unless symbol.match?(char)
 
-    def match_delimiter?(char)
-      return false if @delimiter.empty?
+        if @in_header && [:L_BRACKET, :R_BRACKET, :L_BRACE, :R_BRACE, :COLON].any?(kind)
+          return false
+        end
 
-      char == @delimiter.last
+        # TODO
+        # raise invalid unquated char error
+      end
+
+      true
     end
 
     def create_token(kind, text, line, column)
       position = Position.new(@filename, line, column)
-      Token.new(text, kind, position)
+      Token.new(text, kind, @indent_depth, position)
+    end
+
+    def eos_token
+      return if @eos_done
+
+      @eos_done = true
+      [:EOS, nil]
     end
   end
 end

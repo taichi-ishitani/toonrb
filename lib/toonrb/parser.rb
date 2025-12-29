@@ -2,21 +2,24 @@
 
 module Toonrb
   class Parser < GeneratedParser
-    def initialize(scanner)
+    def initialize(scanner, handler)
       @scanner = scanner
-      @root = Nodes::Root.new
+      @handler = handler
       super()
     end
 
     def parse
       do_parse
-      @root
+      handler.output
     end
 
     private
 
+    attr_reader :scanner
+    attr_reader :handler
+
     def next_token
-      @scanner.next_token
+      scanner.next_token
     end
   end
 end

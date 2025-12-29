@@ -2,16 +2,17 @@
 
 module Toonrb
   module Nodes
-    class Root < Node
+    class Root < Array
       def initialize
-        @items = []
-        super(nil)
+        super(nil, nil)
       end
 
-      attr_reader :items
+      def depth
+        -1
+      end
 
       def to_ruby
-        @items.first&.to_ruby
+        @values.first&.to_ruby
       end
     end
   end

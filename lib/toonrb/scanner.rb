@@ -2,6 +2,8 @@
 
 module Toonrb
   class Scanner
+    NEWLINE = /\n/
+
     L_BRACKET = /\[ */
 
     R_BRACKET = /] */
@@ -30,7 +32,7 @@ module Toonrb
       @line = 1
       @column = 1
       @indent_depth = 0
-      end_array
+      @delimiter = nil
     end
 
     def next_token
@@ -48,19 +50,17 @@ module Toonrb
       @delimiter = token.text.strip
     end
 
-    def end_array_header
-      @in_header = false
-    end
-
-    def end_array
+    def clear_delimiter
       @delimiter = nil
-      @in_header = true
     end
 
     private
 
     def scan_token
       return if eos?
+
+      token = scan_newline
+      return token if token
 
       token = scan_header_symbol
       return token if token
@@ -111,9 +111,17 @@ module Toonrb
       @column += text.length
     end
 
-    def scan_header_symbol
-      return unless @in_header
+    def scan_newline
+      char, line, column = scan(NEWLINE)
+      return unless char
 
+      @line += 1
+      @column = 1
+
+      create_token(:NEWLINE, char, line, column)
+    end
+
+    def scan_header_symbol
       {
         L_BRACKET: L_BRACKET, R_BRACKET: R_BRACKET,
         L_BRACE: L_BRACE, R_BRACE: R_BRACE, COLON: COLON
@@ -195,21 +203,8 @@ module Toonrb
     def valid_unquoted_char?(char)
       return false if char == "\n" || (@delimiter && char == @delimiter)
 
-      {
-        L_BRACKET: L_BRACKET, R_BRACKET: R_BRACKET, L_BRACE: L_BRACE,
-        R_BRACE: R_BRACE, COLON: COLON, D_QUOTE: D_QUOTE, BACK_SLASH: BACK_SLASH
-      }.each do |kind, symbol|
-        next unless symbol.match?(char)
-
-        if @in_header && [:L_BRACKET, :R_BRACKET, :L_BRACE, :R_BRACE, :COLON].any?(kind)
-          return false
-        end
-
-        # TODO
-        # raise invalid unquated char error
-      end
-
-      true
+      [L_BRACKET, R_BRACKET, L_BRACE, R_BRACE, COLON, D_QUOTE, BACK_SLASH]
+        .none? { |symbol| symbol.match?(char) }
     end
 
     def create_token(kind, text, line, column)

@@ -6,6 +6,7 @@ module Toonrb
       @scanner = scanner
       @handler = handler
       super()
+      #@yydebug = true
     end
 
     def parse

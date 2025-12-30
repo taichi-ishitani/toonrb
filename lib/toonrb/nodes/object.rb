@@ -8,12 +8,14 @@ module Toonrb
         @values = []
       end
 
-      def push_value(key, value)
-        @values << [key, value]
+      def push_value(value)
+        @values << value
       end
 
       def to_ruby
-        @values.to_h { |key_value| key_value.map(&:to_ruby) }
+        @values
+          .each_slice(2)
+          .to_h { |k, v| (v && [k.to_ruby, v.to_ruby]) || [k.to_ruby, {}] }
       end
     end
   end

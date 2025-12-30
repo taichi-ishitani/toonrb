@@ -15,41 +15,41 @@ token
 rule
   root
     :
-    | root root_item
+    | root value
+    | root eol
     ;
-  root_item
-    : primitive_array
-    | primitive_keyed_array
+
+  value
+    : object
+    | array
     | primitive eol {
-        handler.push_array_value(val[0])
+        handler.push_value(val[0])
       }
     ;
 
-  primitive_array
-    : array_header primitive_array_values eol {
-        scanner.end_array
+  object
+    : object_item
+    | object object_item
+  object_item
+    : object_key COLON eol
+    | object_key COLON value
+    | object_key array
+    ;
+  object_key
+    : string {
+        handler.push_object_key(val[0])
       }
-  primitive_keyed_array
-    : keyed_array_header primitive_array_values eol {
-        scanner.end_array
+    ;
+
+  array
+    : array_header inline_array_values eol {
+        scanner.clear_delimiter
       }
   array_header
     : L_BRACKET number delimiter R_BRACKET COLON {
         array = Nodes::Array.new(val[0], val[1])
         handler.push_array(array)
-        scanner.end_array_header
       }
-  keyed_array_header
-    : array_key L_BRACKET number delimiter R_BRACKET COLON {
-        array = Nodes::Array.new(val[0], val[2])
-        handler.push_keyed_array(val[0], array)
-        scanner.end_array_header
-      }
-    ;
-  array_key
-    : quoted_string
-    | unquoted_string
-    ;
   delimiter
     : {
         scanner.default_delimiter
@@ -58,29 +58,27 @@ rule
         scanner.delimiter(val[0])
       }
     ;
-  primitive_array_values
+  inline_array_values
     :
     | primitive {
-        handler.push_array_value(val[0])
+        handler.push_value(val[0])
       }
-    | primitive_array_values DELIMITER primitive {
-        handler.push_array_value(val[2])
+    | inline_array_values DELIMITER primitive {
+        handler.push_value(val[2])
       }
     ;
 
   primitive
-    : quoted_string
-    | unquoted_string
+    : string
     | boolean
     | null
     | number
     ;
-  quoted_string
+  string
     : QUOTED_STRING {
         result = Toonrb::Nodes::QuotedString.new(val[0])
       }
-  unquoted_string
-    : UNQUOTED_STRING {
+    | UNQUOTED_STRING {
         result = Toonrb::Nodes::UnquotedString.new(val[0])
       }
     ;

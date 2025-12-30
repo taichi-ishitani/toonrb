@@ -14,7 +14,7 @@ module Toonrb
       end
 
       def to_ruby
-        @values&.map(&:to_ruby) || []
+        @values.map(&:to_ruby)
       end
     end
   end

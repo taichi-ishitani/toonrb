@@ -17,7 +17,7 @@ module Toonrb
         @stack << object
       end
 
-      push_value(key)
+      push_value(key, key: true)
     end
 
     def push_array(array)
@@ -25,10 +25,10 @@ module Toonrb
       @stack << array
     end
 
-    def push_value(value)
+    def push_value(value, **optargs)
       @stack.pop if value.depth < current.depth
 
-      current.push_value(value)
+      current.push_value(value, **optargs)
     end
 
     private

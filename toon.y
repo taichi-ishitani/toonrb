@@ -2,6 +2,8 @@ class Toonrb::GeneratedParser
 token
   L_BRACKET
   R_BRACKET
+  L_BRACE
+  R_BRACE
   COLON
   DELIMITER
   QUOTED_STRING
@@ -42,11 +44,27 @@ rule
     ;
 
   array
-    : array_header inline_array_values eol {
+    : array_header eol {
         scanner.clear_delimiter
       }
+    | array_header inline_array_values eol {
+        scanner.clear_delimiter
+      }
+    | tebular_array_header eol {
+        scanner.clear_delimiter
+      }
+    | tebular_array_header eol tabular_rows {
+        scanner.clear_delimiter
+      }
+    ;
   array_header
-    : L_BRACKET number delimiter R_BRACKET COLON {
+    : array_header_common COLON
+    ;
+  tebular_array_header
+    : array_header_common L_BRACE tabular_fields R_BRACE COLON
+    ;
+  array_header_common
+    : L_BRACKET number delimiter R_BRACKET {
         array = Nodes::Array.new(val[0], val[1])
         handler.push_array(array)
       }
@@ -58,13 +76,32 @@ rule
         scanner.delimiter(val[0])
       }
     ;
+  tabular_fields
+    : string {
+        handler.push_value(val[0], tabular_field: true)
+      }
+    | tabular_fields DELIMITER string {
+        handler.push_value(val[2], tabular_field: true)
+      }
+    ;
   inline_array_values
-    :
-    | primitive {
+    : primitive {
         handler.push_value(val[0])
       }
     | inline_array_values DELIMITER primitive {
         handler.push_value(val[2])
+      }
+    ;
+  tabular_rows
+    : tabular_row eol
+    | tabular_rows tabular_row eol
+    ;
+  tabular_row
+    : primitive {
+        handler.push_value(val[0], tabular_value: true, head_value: true)
+      }
+    | tabular_row DELIMITER primitive {
+        handler.push_value(val[2], tabular_value: true, head_value: false)
       }
     ;
 

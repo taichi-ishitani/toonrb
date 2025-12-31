@@ -101,5 +101,69 @@ module Toonrb
       json = '{"x-custom":[]}'
       assert_equal(load_json(json), load_toon(toon))
     end
+
+    def test_array_tabular
+      toon = <<~'TOON'
+        items[2]{sku,qty,price}:
+          A1,2,9.99
+          B2,1,14.5
+      TOON
+      json = <<~'JSON'
+        {"items":[{"sku":"A1","qty":2,"price":9.99},{"sku":"B2","qty":1,"price":14.5}]}
+      JSON
+      assert_equal(load_json(json), load_toon(toon))
+
+      toon = <<~'TOON'
+        items[2]{id,value}:
+          1,null
+          2,"test"
+      TOON
+      json = <<~'JSON'
+        {"items":[{"id":1,"value":null},{"id":2,"value":"test"}]}
+      JSON
+      assert_equal(load_json(json), load_toon(toon))
+
+      toon = <<~'TOON'
+        items[2]{id,note}:
+          1,"a:b"
+          2,"c:d"
+      TOON
+      json = <<~'JSON'
+        {"items":[{"id":1,"note":"a:b"},{"id":2,"note":"c:d"}]}
+      JSON
+      assert_equal(load_json(json), load_toon(toon))
+
+      toon = <<~'TOON'
+        items[2]{"order:id","full name"}:
+          1,Ada
+          2,Bob
+      TOON
+      json = <<~'JSON'
+        {"items":[{"order:id":1,"full name":"Ada"},{"order:id":2,"full name":"Bob"}]}
+      JSON
+      assert_equal(load_json(json), load_toon(toon))
+
+      toon = <<~'TOON'
+        "x-items"[2]{id,name}:
+          1,Ada
+          2,Bob
+      TOON
+      json = <<~'JSON'
+        {"x-items":[{"id":1,"name":"Ada"},{"id":2,"name":"Bob"}]}
+      JSON
+      assert_equal(load_json(json), load_toon(toon))
+
+      # TODO
+      #toon = <<~'TOON'
+      #  items[2]{id,name}:
+      #    1,Alice
+      #    2,Bob
+      #  count: 2
+      #TOON
+      #json = <<~'JSON'
+      #  {"items":[{"id":1,"name":"Alice"},{"id":2,"name":"Bob"}],"count":2}
+      #JSON
+      #assert_equal(load_json(json), load_toon(toon))
+    end
   end
 end

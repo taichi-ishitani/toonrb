@@ -2,11 +2,11 @@
 
 module Toonrb
   class Parser < GeneratedParser
-    def initialize(scanner, handler)
+    def initialize(scanner, handler, debug: false)
       @scanner = scanner
       @handler = handler
+      @yydebug = debug
       super()
-      #@yydebug = true
     end
 
     def parse

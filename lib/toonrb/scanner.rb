@@ -2,7 +2,9 @@
 
 module Toonrb
   class Scanner
-    NEWLINE = /\n/
+    INDENT = /^[ \t]*/
+
+    NL = /\n/
 
     L_BRACKET = /\[ */
 
@@ -13,6 +15,8 @@ module Toonrb
     R_BRACE = /} */
 
     COLON = /: */
+
+    HYPHEN = /(?:- )|(?:-$)/
 
     D_QUOTE = /" */
 
@@ -26,20 +30,26 @@ module Toonrb
 
     NUMBER = /\A-?(?:0|[1-9]\d*)(?:\.\d+)?(?:e[+-]?\d+)? *\Z/i
 
-    def initialize(string, filename)
+    def initialize(string, filename, indent_size)
       @ss = StringScanner.new(string)
       @filename = filename
       @line = 1
       @column = 1
-      @indent_depth = 0
       @delimiter = nil
+      @indent_size = indent_size.to_f
+      @indent_depth = 0
+      @list_depth = []
+      @reserved_tokens = []
     end
 
     def next_token
-      token = scan_token
-      return eos_token unless token
-
-      [token.kind, token]
+      scan_indent
+      scan_eos
+      if !@reserved_tokens.empty?
+        @reserved_tokens.shift
+      elsif (token = scan_token)
+        [token.kind, token]
+      end
     end
 
     def default_delimiter
@@ -55,6 +65,64 @@ module Toonrb
     end
 
     private
+
+    def scan_indent
+      return if @column > 1 || eos?
+
+      indent, _line, _column = scan(INDENT)
+      return unless indent
+
+      next_depth = (indent.size / @indent_size).floor
+      update_indent_depth(next_depth)
+
+      pop_list_stack(next_depth)
+      if (hyphen_token = scan_list_hyphen)
+        @reserved_tokens.push([hyphen_token.kind, hyphen_token])
+      end
+    end
+
+    def pop_list_stack(indent_depth)
+      @list_depth
+        .delete_if { |depth| depth > indent_depth }
+    end
+
+    def scan_list_hyphen
+      hyphen, line, column = scan(HYPHEN)
+      return unless hyphen
+
+      @indent_depth += 1
+      @list_depth.push(@indent_depth)
+
+      create_token(:HYPHEN, hyphen, line, column)
+    end
+
+    def update_indent_depth(next_depth)
+      if @indent_depth > next_depth
+        count = calc_indent_pop_count(next_depth)
+        count.positive? &&
+          count.times { @reserved_tokens.push([:POP_INDENT, nil]) }
+      elsif next_depth > @indent_depth
+        count = next_depth - @indent_depth
+        count.positive? &&
+          count.times { @reserved_tokens.push([:PUSH_INDENT, nil]) }
+      end
+
+      @indent_depth = next_depth
+    end
+
+    def calc_indent_pop_count(next_depth)
+      count = @indent_depth - next_depth
+      count -= @list_depth.count { |depth| next_depth < depth }
+      count
+    end
+
+    def scan_eos
+      return unless eos?
+
+      update_indent_depth(0)
+      @reserved_tokens.push([:EOS, nil])
+      @reserved_tokens.push(nil)
+    end
 
     def scan_token
       return if eos?
@@ -112,13 +180,13 @@ module Toonrb
     end
 
     def scan_newline
-      char, line, column = scan(NEWLINE)
+      char, line, column = scan(NL)
       return unless char
 
       @line += 1
       @column = 1
 
-      create_token(:NEWLINE, char, line, column)
+      create_token(:NL, char, line, column)
     end
 
     def scan_header_symbol
@@ -210,13 +278,6 @@ module Toonrb
     def create_token(kind, text, line, column)
       position = Position.new(@filename, line, column)
       Token.new(text, kind, @indent_depth, position)
-    end
-
-    def eos_token
-      return if @eos_done
-
-      @eos_done = true
-      [:EOS, nil]
     end
   end
 end

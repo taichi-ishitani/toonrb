@@ -22,5 +22,9 @@ module Toonrb
     def next_token
       scanner.next_token
     end
+
+    def each_list_item(val, &)
+      [val[0], *val[1]&.map { _2 }].each_with_index(&)
+    end
   end
 end

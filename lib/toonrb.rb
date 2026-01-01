@@ -4,7 +4,6 @@ require 'strscan'
 
 require_relative 'toonrb/version'
 require_relative 'toonrb/token'
-require_relative 'toonrb/nodes/node'
 require_relative 'toonrb/nodes/scalar'
 require_relative 'toonrb/nodes/array'
 require_relative 'toonrb/nodes/object'
@@ -24,9 +23,9 @@ module Toonrb
           string_or_io.read
         end
 
-      scanner = Scanner.new(toon, filename)
+      scanner = Scanner.new(toon, filename, 2)
       hander = Handler.new
-      parser = Parser.new(scanner, hander)
+      parser = Parser.new(scanner, hander, debug: false)
 
       output = parser.parse
       output.to_ruby

@@ -10,25 +10,32 @@ module Toonrb
       @stack.first
     end
 
-    def push_object_key(key)
-      if key.depth > current.depth
-        object = Nodes::Object.new(key)
-        push_value(object)
-        @stack << object
-      end
+    def push_object(key)
+      object = Nodes::Object.new
+      push_value(object)
 
+      @stack << object
       push_value(key, key: true)
     end
 
-    def push_array(array)
+    def push_array(size)
+      array = Nodes::Array.new(size)
       push_value(array)
+
       @stack << array
     end
 
     def push_value(value, **optargs)
-      @stack.pop if value.depth < current.depth
-
       current.push_value(value, **optargs)
+    end
+
+    def push_empty_object
+      object = Nodes::EmptyObject.new
+      push_value(object)
+    end
+
+    def pop
+      @stack.pop
     end
 
     private

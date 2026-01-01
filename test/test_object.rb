@@ -224,16 +224,15 @@ module Toonrb
       JSON
       assert_equal(json, toon)
 
-      # TODO
-      #toon = load_toon(<<~'TOON')
-      #  a:
-      #    b:
-      #      c: deep
-      #TOON
-      #json = load_json(<<~'JSON')
-      #  {"a":{"b":{"c":"deep"}}}
-      #JSON
-      #assert_equal(json, toon)
+      toon = load_toon(<<~'TOON')
+        a:
+          b:
+            c: deep
+      TOON
+      json = load_json(<<~'JSON')
+        {"a":{"b":{"c":"deep"}}}
+      JSON
+      assert_equal(json, toon)
     end
   end
 end

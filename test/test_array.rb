@@ -5,40 +5,217 @@ require_relative 'test_helper'
 module Toonrb
   class TestArray < TestCase
     def test_array_nested
-      toon = '[5]: x,y,"true",true,10'
-      json = '["x", "y", "true", true, 10]'
+      toon = <<~'TOON'
+        items[2]:
+          - id: 1
+            name: First
+          - id: 2
+            name: Second
+            extra: true
+      TOON
+      json = <<~'JSON'
+        {"items":[{"id":1,"name":"First"},{"id":2,"name":"Second","extra":true}]}
+      JSON
       assert_equal(load_json(json), load_toon(toon))
 
-      # TODO
-      #toon = <<~'TOON'
-      #  [2]{id}:
-      #    1
-      #    2
-      #TOON
-      #json = '[{"id": 1}, {"id": 2}]'
-      #assert_equal(load_json(json), load_toon(toon))
-
-      # TODO
-      #toon = <<~'TOON'
-      #  [2]:
-      #    - id: 1
-      #    - id: 2
-      #      name: Ada
-      #TOON
-      #json = '[{"id": 1}, {"id" 2, "name": "Ada"}]'
-      #assert_equal(load_json(json), load_toon(toon))
-
-      toon = '[0]:'
-      json = '[]'
+      toon = <<~'TOON'
+        items[3]:
+          - first
+          - second
+          -
+      TOON
+      json = <<~'JSON'
+        {"items":["first","second",{}]}
+      JSON
       assert_equal(load_json(json), load_toon(toon))
 
-      #toon = <<~'TOON'
-      #[2]:
-      #  - [2]: 1, 2
-      #  - [0]:
-      #TOON
-      #json = '[[1, 2], []]'
-      #assert_equal(load_json(json), load_toon(toon))
+      toon = <<~'TOON'
+        items[2]:
+          - properties:
+              state:
+                type: string
+          - id: 2
+      TOON
+      json = <<~'JSON'
+        {"items":[{"properties":{"state":{"type":"string"}}},{"id":2}]}
+      JSON
+      assert_equal(load_json(json), load_toon(toon))
+
+      toon = <<~'TOON'
+        items[1]:
+          - id: 1
+            nested:
+              x: 1
+      TOON
+      json = <<~'JSON'
+        {"items":[{"id":1,"nested":{"x":1}}]}
+      JSON
+      assert_equal(load_json(json), load_toon(toon))
+
+      toon = <<~'TOON'
+        items[1]:
+          - users[2]{id,name}:
+              1,Ada
+              2,Bob
+            status: active
+      TOON
+      json = <<~'JSON'
+        {"items":[{"users":[{"id":1,"name":"Ada"},{"id":2,"name":"Bob"}],"status":"active"}]}
+      JSON
+      assert_equal(load_json(json), load_toon(toon))
+
+      toon = <<~'TOON'
+        items[1]:
+          - name: test
+            data[0]:
+      TOON
+      json = <<~'JSON'
+        {"items":[{"name":"test","data":[]}]}
+      JSON
+      assert_equal(load_json(json), load_toon(toon))
+
+      toon = <<~'TOON'
+        items[1]:
+          - matrix[2]:
+              - [2]: 1,2
+              - [2]: 3,4
+            name: grid
+      TOON
+      json = <<~'JSON'
+        {"items":[{"matrix":[[1,2],[3,4]],"name":"grid"}]}
+      JSON
+      assert_equal(load_json(json), load_toon(toon))
+
+      toon = <<~'TOON'
+        pairs[2]:
+          - [2]: a,b
+          - [2]: c,d
+      TOON
+      json = <<~'JSON'
+        {"pairs":[["a","b"],["c","d"]]}
+      JSON
+      assert_equal(load_json(json), load_toon(toon))
+
+      toon = <<~'TOON'
+        pairs[2]:
+          - [2]: a,b
+          - [3]: "c,d","e:f","true"
+      TOON
+      json = <<~'JSON'
+        {"pairs":[["a","b"],["c,d","e:f","true"]]}
+      JSON
+      assert_equal(load_json(json), load_toon(toon))
+
+      toon = <<~'TOON'
+        pairs[2]:
+          - [0]:
+          - [0]:
+      TOON
+      json = <<~'JSON'
+        {"pairs":[[],[]]}
+      JSON
+      assert_equal(load_json(json), load_toon(toon))
+
+      toon = <<~'TOON'
+        pairs[2]:
+          - [1]: 1
+          - [2]: 2,3
+      TOON
+      json = <<~'JSON'
+        {"pairs":[[1],[2,3]]}
+      JSON
+      assert_equal(load_json(json), load_toon(toon))
+
+      toon = <<~'TOON'
+        [5]: x,y,"true",true,10
+      TOON
+      json = <<~'JSON'
+        ["x","y","true",true,10]
+      JSON
+      assert_equal(load_json(json), load_toon(toon))
+
+      toon = <<~'TOON'
+        [2]{id}:
+          1
+          2
+      TOON
+      json = <<~'JSON'
+        [{"id":1},{"id":2}]
+      JSON
+      assert_equal(load_json(json), load_toon(toon))
+
+      toon = <<~'TOON'
+        [2]:
+          - id: 1
+          - id: 2
+            name: Ada
+      TOON
+      json = <<~'JSON'
+        [{"id":1},{"id":2,"name":"Ada"}]
+      JSON
+      assert_equal(load_json(json), load_toon(toon))
+
+      toon = <<~'TOON'
+        [0]:
+      TOON
+      json = <<~'JSON'
+        []
+      JSON
+      assert_equal(load_json(json), load_toon(toon))
+
+      toon = <<~'TOON'
+        [2]:
+          - [2]: 1,2
+          - [0]:
+      TOON
+      json = <<~'JSON'
+        [[1,2],[]]
+      JSON
+      assert_equal(load_json(json), load_toon(toon))
+
+      toon = <<~'TOON'
+        user:
+          id: 123
+          name: Ada
+          tags[2]: reading,gaming
+          active: true
+          prefs[0]:
+      TOON
+      json = <<~'JSON'
+        {"user":{"id":123,"name":"Ada","tags":["reading","gaming"],"active":true,"prefs":[]}}
+      JSON
+      assert_equal(load_json(json), load_toon(toon))
+
+      toon = <<~'TOON'
+        items[3]:
+          - 1
+          - a: 1
+          - text
+      TOON
+      json = <<~'JSON'
+        {"items":[1,{"a":1},"text"]}
+      JSON
+      assert_equal(load_json(json), load_toon(toon))
+
+      toon = <<~'TOON'
+        items[2]:
+          - a: 1
+          - [2]: 1,2
+      TOON
+      json = <<~'JSON'
+        {"items":[{"a":1},[1,2]]}
+      JSON
+      assert_equal(load_json(json), load_toon(toon))
+
+      toon = <<~'TOON'
+        "x-items"[2]:
+          - id: 1
+          - id: 2
+      TOON
+      json = <<~'JSON'
+        {"x-items":[{"id":1},{"id":2}]}
+      JSON
+      assert_equal(load_json(json), load_toon(toon))
     end
 
     def test_array_primitive
@@ -153,17 +330,16 @@ module Toonrb
       JSON
       assert_equal(load_json(json), load_toon(toon))
 
-      # TODO
-      #toon = <<~'TOON'
-      #  items[2]{id,name}:
-      #    1,Alice
-      #    2,Bob
-      #  count: 2
-      #TOON
-      #json = <<~'JSON'
-      #  {"items":[{"id":1,"name":"Alice"},{"id":2,"name":"Bob"}],"count":2}
-      #JSON
-      #assert_equal(load_json(json), load_toon(toon))
+      toon = <<~'TOON'
+        items[2]{id,name}:
+          1,Alice
+          2,Bob
+        count: 2
+      TOON
+      json = <<~'JSON'
+        {"items":[{"id":1,"name":"Alice"},{"id":2,"name":"Bob"}],"count":2}
+      JSON
+      assert_equal(load_json(json), load_toon(toon))
     end
   end
 end

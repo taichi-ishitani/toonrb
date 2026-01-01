@@ -2,9 +2,8 @@
 
 module Toonrb
   module Nodes
-    class Array < Node
-      def initialize(head_token, size)
-        super(head_token)
+    class Array
+      def initialize(size)
         @size = size
       end
 

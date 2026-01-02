@@ -3,6 +3,7 @@
 require 'strscan'
 
 require_relative 'toonrb/version'
+require_relative 'toonrb/parse_error'
 require_relative 'toonrb/token'
 require_relative 'toonrb/nodes/base'
 require_relative 'toonrb/nodes/scalar'
@@ -29,6 +30,7 @@ module Toonrb
       parser = Parser.new(scanner, hander, debug: false)
 
       output = parser.parse
+      output.validate
       output.to_ruby
     end
   end

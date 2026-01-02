@@ -2,6 +2,8 @@
 
 module Toonrb
   class Scanner
+    include RaiseParseError
+
     INDENT = /^[ \t]*/
 
     NL = /\n/
@@ -60,7 +62,7 @@ module Toonrb
     end
 
     def delimiter(token)
-      @delimiter = token.text.strip
+      @delimiter = token.text[0]
     end
 
     def clear_delimiter
@@ -253,8 +255,8 @@ module Toonrb
       end
 
       if buffer.size < 2 || buffer.last != '"'
-        # TODO
-        # raise missing closing quote error
+        position = create_position(@line, @column)
+        raise_parse_error 'missing closing quote', position
       end
 
       text = buffer.join
@@ -269,8 +271,8 @@ module Toonrb
         { '\\' => '\\', '"' => '"', 'n' => "\n", 'r' => "\r", 't' => "\t" }[char]
       return escaped_char if escaped_char
 
-      # TODO
-      # raise invalid escape sequence error
+      position = create_position(@line, @column - 1)
+      raise_parse_error "invalid escape sequence: \\#{char}", position
     end
 
     def scan_unquoted_string
@@ -294,10 +296,18 @@ module Toonrb
     end
 
     def valid_unquoted_char?(char)
-      return false if char == "\n" || (@delimiter && char == @delimiter)
+      return false if char == "\n" || match_delimiter?(char)
 
       [L_BRACKET, R_BRACKET, L_BRACE, R_BRACE, COLON, D_QUOTE, BACK_SLASH]
         .none? { |symbol| symbol.match?(char) }
+    end
+
+    def match_delimiter?(char)
+      if @delimiter
+        char == @delimiter
+      else
+        DELIMITER.match?(char)
+      end
     end
 
     def create_token(kind, text, line, column)

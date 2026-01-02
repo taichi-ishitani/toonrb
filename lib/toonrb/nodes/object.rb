@@ -13,10 +13,17 @@ module Toonrb
         end
       end
 
+      def validate
+        @keys.zip(@values).each do |key, value|
+          key.validate
+          value.validate
+        end
+      end
+
       def to_ruby
         @keys
-          .zip(@values || [])
-          .to_h { |k, v| [k.to_ruby, v.to_ruby] }
+          .zip(@values)
+          .to_h { |key, value| [key.to_ruby, value.to_ruby] }
       end
     end
 

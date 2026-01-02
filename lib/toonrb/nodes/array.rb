@@ -21,6 +21,14 @@ module Toonrb
         end
       end
 
+      def validate
+        if @fields
+          validate_tabular_array
+        else
+          validate_array
+        end
+      end
+
       def to_ruby
         if @fields
           fields = values_to_ruby(@fields)
@@ -32,6 +40,36 @@ module Toonrb
       end
 
       private
+
+      def validate_tabular_array
+        validate_array_size('tabular rows')
+        validate_tabular_row_size
+        @valus&.flatten&.each(&:validate)
+      end
+
+      def validate_array
+        validate_array_size('array items')
+        @values&.each(&:validate)
+      end
+
+      def validate_array_size(item_kind)
+        actual = @values&.size || 0
+        expected = @size.to_ruby
+        return if actual == expected
+
+        raise_parse_error "expected #{expected} #{item_kind}, but got #{actual}", position
+      end
+
+      def validate_tabular_row_size
+        expected = @fields.size
+        @values.each do |row|
+          actual = row.size
+          next if actual == expected
+
+          position = row.first.position
+          raise_parse_error "expected #{expected} tabular row items, but got #{actual}", position
+        end
+      end
 
       def values_to_ruby(values)
         values&.map(&:to_ruby)

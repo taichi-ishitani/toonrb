@@ -11,6 +11,10 @@ module Toonrb
     attr_reader :filename
     attr_reader :line
     attr_reader :column
+
+    def to_s
+      "filename: #{filename || 'unknown'} line: #{line} column: #{column}"
+    end
   end
 
   class Token

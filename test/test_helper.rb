@@ -15,5 +15,12 @@ module Toonrb
     def load_json(json)
       JSON.load(json)
     end
+
+    def assert_parse_error(toon, message = nil)
+      error = assert_raises(ParseError, Racc::ParseError) do
+        load_toon(toon)
+      end
+      message && assert_equal(message, error.error_message)
+    end
   end
 end

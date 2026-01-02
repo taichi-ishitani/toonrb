@@ -29,6 +29,9 @@ Style/Alias:
 Style/EmptyCaseCondition:
   Enabled: false
 
+Style/EmptyMethod:
+  EnforcedStyle: expanded
+
 Style/RaiseArgs:
   EnforcedStyle: compact
 

@@ -4,6 +4,7 @@ require 'strscan'
 
 require_relative 'toonrb/version'
 require_relative 'toonrb/token'
+require_relative 'toonrb/nodes/base'
 require_relative 'toonrb/nodes/scalar'
 require_relative 'toonrb/nodes/array'
 require_relative 'toonrb/nodes/object'

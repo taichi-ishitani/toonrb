@@ -45,11 +45,14 @@ module Toonrb
     def next_token
       scan_indent
       scan_eos
-      if !@reserved_tokens.empty?
-        @reserved_tokens.shift
-      elsif (token = scan_token)
-        [token.kind, token]
-      end
+
+      token =
+        if @reserved_tokens.empty?
+          scan_token
+        else
+          @reserved_tokens.shift
+        end
+      token && [token.kind, token]
     end
 
     def default_delimiter
@@ -62,6 +65,10 @@ module Toonrb
 
     def clear_delimiter
       @delimiter = nil
+    end
+
+    def current_position
+      create_position(@line, @column)
     end
 
     private
@@ -77,7 +84,7 @@ module Toonrb
 
       pop_list_stack(next_depth)
       if (hyphen_token = scan_list_hyphen)
-        @reserved_tokens.push([hyphen_token.kind, hyphen_token])
+        @reserved_tokens.push(hyphen_token)
       end
     end
 
@@ -98,16 +105,23 @@ module Toonrb
 
     def update_indent_depth(next_depth)
       if @indent_depth > next_depth
-        count = calc_indent_pop_count(next_depth)
-        count.positive? &&
-          count.times { @reserved_tokens.push([:POP_INDENT, nil]) }
+        create_pop_indent_tokens(next_depth)
       elsif next_depth > @indent_depth
-        count = next_depth - @indent_depth
-        count.positive? &&
-          count.times { @reserved_tokens.push([:PUSH_INDENT, nil]) }
+        create_push_indent_tokens(next_depth)
       end
 
       @indent_depth = next_depth
+    end
+
+    def create_pop_indent_tokens(next_depth)
+      count = calc_indent_pop_count(next_depth)
+      return unless count.positive?
+
+      count.times do |i|
+        column = ((@indent_depth - i) * @indent_size).to_i
+        token = create_token(:POP_INDENT, '', @line, column)
+        @reserved_tokens.push(token)
+      end
     end
 
     def calc_indent_pop_count(next_depth)
@@ -116,24 +130,35 @@ module Toonrb
       count
     end
 
+    def create_push_indent_tokens(next_depth)
+      count = next_depth - @indent_depth
+      return unless count.positive?
+
+      count.times do |i|
+        column = ((@indent_depth + i) * @indent_size).to_i
+        token = create_token(:PUSH_INDENT, '', @line, column)
+        @reserved_tokens.push(token)
+      end
+    end
+
     def scan_eos
       return unless eos?
 
       update_indent_depth(0)
-      @reserved_tokens.push([:EOS, nil])
+
+      token = create_token(:EOS, '', @line, @column)
+      @reserved_tokens.push(token)
       @reserved_tokens.push(nil)
     end
 
     def scan_token
-      return if eos?
-
       token = scan_newline
       return token if token
 
       token = scan_header_symbol
       return token if token
 
-      token = scna_delimiter
+      token = scan_delimiter
       return token if token
 
       token = scan_quoted_string
@@ -204,7 +229,7 @@ module Toonrb
       nil
     end
 
-    def scna_delimiter
+    def scan_delimiter
       char, line, column = scan(DELIMITER)
       return unless char
 
@@ -276,8 +301,12 @@ module Toonrb
     end
 
     def create_token(kind, text, line, column)
-      position = Position.new(@filename, line, column)
+      position = create_position(line, column)
       Token.new(text, kind, @indent_depth, position)
+    end
+
+    def create_position(line, column)
+      Position.new(@filename, line, column)
     end
   end
 end

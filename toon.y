@@ -36,7 +36,10 @@ rule
         handler.pop
       }
   object_head_item
-    : object_head_key COLON eol
+    : object_head_key COLON eol {
+        position = scanner.current_position
+        handler.push_empty_object(position)
+      }
     | object_head_key COLON primitive eol {
         handler.push_value(val[2])
       }
@@ -48,7 +51,10 @@ rule
         handler.push_object(val[0])
       }
   object_item
-    : object_key COLON eol
+    : object_key COLON eol {
+        position = scanner.current_position
+        handler.push_empty_object(position)
+      }
     | object_key COLON primitive eol {
         handler.push_value(val[2])
       }
@@ -87,7 +93,7 @@ rule
     : array_header_common L_BRACE tabular_fields R_BRACE COLON
   array_header_common
     : L_BRACKET number delimiter R_BRACKET {
-        handler.push_array(val[1])
+        handler.push_array(val[0], val[1])
       }
   delimiter
     : {
@@ -108,7 +114,8 @@ rule
     : list_array_value+
   list_array_value
     : HYPHEN eol {
-        handler.push_empty_object
+        position = scanner.current_position
+        handler.push_empty_object(position)
       }
     | HYPHEN primitive eol {
         handler.push_value(val[1])

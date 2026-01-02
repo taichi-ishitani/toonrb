@@ -4,7 +4,7 @@ module Toonrb
   module Nodes
     class Root < Array
       def initialize
-        super(nil)
+        super(nil, nil)
       end
 
       def to_ruby

@@ -2,8 +2,9 @@
 
 module Toonrb
   module Nodes
-    class Scalar
+    class Scalar < Base
       def initialize(token)
+        super(token.position)
         @token = token
       end
 

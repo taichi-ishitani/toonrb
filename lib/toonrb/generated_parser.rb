@@ -105,13 +105,13 @@ racc_reduce_table = [
   2, 28, :_reduce_7,
   2, 21, :_reduce_8,
   4, 27, :_reduce_9,
-  3, 25, :_reduce_none,
+  3, 25, :_reduce_10,
   4, 25, :_reduce_11,
   2, 25, :_reduce_none,
   3, 25, :_reduce_none,
   4, 25, :_reduce_none,
   1, 29, :_reduce_15,
-  3, 26, :_reduce_none,
+  3, 26, :_reduce_16,
   4, 26, :_reduce_17,
   2, 26, :_reduce_none,
   3, 26, :_reduce_none,
@@ -312,9 +312,16 @@ module_eval(<<'.,.,', 'toon.y', 35)
   end
 .,.,
 
-# reduce 10 omitted
+module_eval(<<'.,.,', 'toon.y', 39)
+  def _reduce_10(val, _values, result)
+            position = scanner.current_position
+        handler.push_empty_object(position)
 
-module_eval(<<'.,.,', 'toon.y', 40)
+    result
+  end
+.,.,
+
+module_eval(<<'.,.,', 'toon.y', 43)
   def _reduce_11(val, _values, result)
             handler.push_value(val[2])
 
@@ -328,7 +335,7 @@ module_eval(<<'.,.,', 'toon.y', 40)
 
 # reduce 14 omitted
 
-module_eval(<<'.,.,', 'toon.y', 47)
+module_eval(<<'.,.,', 'toon.y', 50)
   def _reduce_15(val, _values, result)
             handler.push_object(val[0])
 
@@ -336,9 +343,16 @@ module_eval(<<'.,.,', 'toon.y', 47)
   end
 .,.,
 
-# reduce 16 omitted
+module_eval(<<'.,.,', 'toon.y', 54)
+  def _reduce_16(val, _values, result)
+            position = scanner.current_position
+        handler.push_empty_object(position)
 
-module_eval(<<'.,.,', 'toon.y', 52)
+    result
+  end
+.,.,
+
+module_eval(<<'.,.,', 'toon.y', 58)
   def _reduce_17(val, _values, result)
             handler.push_value(val[2])
 
@@ -352,7 +366,7 @@ module_eval(<<'.,.,', 'toon.y', 52)
 
 # reduce 20 omitted
 
-module_eval(<<'.,.,', 'toon.y', 59)
+module_eval(<<'.,.,', 'toon.y', 65)
   def _reduce_21(val, _values, result)
             handler.push_value(val[0], key: true)
 
@@ -360,7 +374,7 @@ module_eval(<<'.,.,', 'toon.y', 59)
   end
 .,.,
 
-module_eval(<<'.,.,', 'toon.y', 64)
+module_eval(<<'.,.,', 'toon.y', 70)
   def _reduce_22(val, _values, result)
             handler.pop
         scanner.clear_delimiter
@@ -369,7 +383,7 @@ module_eval(<<'.,.,', 'toon.y', 64)
   end
 .,.,
 
-module_eval(<<'.,.,', 'toon.y', 68)
+module_eval(<<'.,.,', 'toon.y', 74)
   def _reduce_23(val, _values, result)
             handler.pop
         scanner.clear_delimiter
@@ -378,7 +392,7 @@ module_eval(<<'.,.,', 'toon.y', 68)
   end
 .,.,
 
-module_eval(<<'.,.,', 'toon.y', 72)
+module_eval(<<'.,.,', 'toon.y', 78)
   def _reduce_24(val, _values, result)
             handler.pop
         scanner.clear_delimiter
@@ -387,7 +401,7 @@ module_eval(<<'.,.,', 'toon.y', 72)
   end
 .,.,
 
-module_eval(<<'.,.,', 'toon.y', 76)
+module_eval(<<'.,.,', 'toon.y', 82)
   def _reduce_25(val, _values, result)
             handler.pop
         scanner.clear_delimiter
@@ -396,7 +410,7 @@ module_eval(<<'.,.,', 'toon.y', 76)
   end
 .,.,
 
-module_eval(<<'.,.,', 'toon.y', 80)
+module_eval(<<'.,.,', 'toon.y', 86)
   def _reduce_26(val, _values, result)
             handler.pop
         scanner.clear_delimiter
@@ -409,15 +423,15 @@ module_eval(<<'.,.,', 'toon.y', 80)
 
 # reduce 28 omitted
 
-module_eval(<<'.,.,', 'toon.y', 89)
+module_eval(<<'.,.,', 'toon.y', 95)
   def _reduce_29(val, _values, result)
-            handler.push_array(val[1])
+            handler.push_array(val[0], val[1])
 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'toon.y', 93)
+module_eval(<<'.,.,', 'toon.y', 99)
   def _reduce_30(val, _values, result)
             scanner.default_delimiter
 
@@ -425,7 +439,7 @@ module_eval(<<'.,.,', 'toon.y', 93)
   end
 .,.,
 
-module_eval(<<'.,.,', 'toon.y', 96)
+module_eval(<<'.,.,', 'toon.y', 102)
   def _reduce_31(val, _values, result)
             scanner.delimiter(val[0])
 
@@ -433,28 +447,28 @@ module_eval(<<'.,.,', 'toon.y', 96)
   end
 .,.,
 
-module_eval(<<'.,.,', 'toon.y', 104)
+module_eval(<<'.,.,', 'toon.y', 110)
   def _reduce_32(val, _values, result)
     result = val
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'toon.y', 104)
+module_eval(<<'.,.,', 'toon.y', 110)
   def _reduce_33(val, _values, result)
     result = val[1] ? val[1].unshift(val[0]) : val
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'toon.y', 104)
+module_eval(<<'.,.,', 'toon.y', 110)
   def _reduce_34(val, _values, result)
     result = val[1] ? val[1].unshift(val[0]) : val
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'toon.y', 100)
+module_eval(<<'.,.,', 'toon.y', 106)
   def _reduce_35(val, _values, result)
             each_list_item(val) { |v, _| handler.push_value(v, tabular_field: true) }
 
@@ -462,28 +476,28 @@ module_eval(<<'.,.,', 'toon.y', 100)
   end
 .,.,
 
-module_eval(<<'.,.,', 'toon.y', 108)
+module_eval(<<'.,.,', 'toon.y', 114)
   def _reduce_36(val, _values, result)
     result = val
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'toon.y', 108)
+module_eval(<<'.,.,', 'toon.y', 114)
   def _reduce_37(val, _values, result)
     result = val[1] ? val[1].unshift(val[0]) : val
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'toon.y', 108)
+module_eval(<<'.,.,', 'toon.y', 114)
   def _reduce_38(val, _values, result)
     result = val[1] ? val[1].unshift(val[0]) : val
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'toon.y', 104)
+module_eval(<<'.,.,', 'toon.y', 110)
   def _reduce_39(val, _values, result)
             each_list_item(val) { |v, _| handler.push_value(v) }
 
@@ -491,14 +505,14 @@ module_eval(<<'.,.,', 'toon.y', 104)
   end
 .,.,
 
-module_eval(<<'.,.,', 'toon.y', 110)
+module_eval(<<'.,.,', 'toon.y', 116)
   def _reduce_40(val, _values, result)
     result = val[1] ? val[1].unshift(val[0]) : val
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'toon.y', 110)
+module_eval(<<'.,.,', 'toon.y', 116)
   def _reduce_41(val, _values, result)
     result = val[1] ? val[1].unshift(val[0]) : val
     result
@@ -507,15 +521,16 @@ module_eval(<<'.,.,', 'toon.y', 110)
 
 # reduce 42 omitted
 
-module_eval(<<'.,.,', 'toon.y', 110)
+module_eval(<<'.,.,', 'toon.y', 116)
   def _reduce_43(val, _values, result)
-            handler.push_empty_object
+            position = scanner.current_position
+        handler.push_empty_object(position)
 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'toon.y', 113)
+module_eval(<<'.,.,', 'toon.y', 120)
   def _reduce_44(val, _values, result)
             handler.push_value(val[1])
 
@@ -527,21 +542,21 @@ module_eval(<<'.,.,', 'toon.y', 113)
 
 # reduce 46 omitted
 
-module_eval(<<'.,.,', 'toon.y', 121)
+module_eval(<<'.,.,', 'toon.y', 128)
   def _reduce_47(val, _values, result)
     result = val
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'toon.y', 121)
+module_eval(<<'.,.,', 'toon.y', 128)
   def _reduce_48(val, _values, result)
     result = val[1] ? val[1].unshift(val[0]) : val
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'toon.y', 121)
+module_eval(<<'.,.,', 'toon.y', 128)
   def _reduce_49(val, _values, result)
     result = val[1] ? val[1].unshift(val[0]) : val
     result
@@ -550,7 +565,7 @@ module_eval(<<'.,.,', 'toon.y', 121)
 
 # reduce 50 omitted
 
-module_eval(<<'.,.,', 'toon.y', 121)
+module_eval(<<'.,.,', 'toon.y', 128)
   def _reduce_51(val, _values, result)
             each_list_item(val) do |v, i|
           handler.push_value(v, tabular_value: true, head_value: i.zero?)
@@ -568,7 +583,7 @@ module_eval(<<'.,.,', 'toon.y', 121)
 
 # reduce 55 omitted
 
-module_eval(<<'.,.,', 'toon.y', 133)
+module_eval(<<'.,.,', 'toon.y', 140)
   def _reduce_56(val, _values, result)
             result = Toonrb::Nodes::QuotedString.new(val[0])
 
@@ -576,7 +591,7 @@ module_eval(<<'.,.,', 'toon.y', 133)
   end
 .,.,
 
-module_eval(<<'.,.,', 'toon.y', 136)
+module_eval(<<'.,.,', 'toon.y', 143)
   def _reduce_57(val, _values, result)
             result = Toonrb::Nodes::UnquotedString.new(val[0])
 
@@ -584,7 +599,7 @@ module_eval(<<'.,.,', 'toon.y', 136)
   end
 .,.,
 
-module_eval(<<'.,.,', 'toon.y', 140)
+module_eval(<<'.,.,', 'toon.y', 147)
   def _reduce_58(val, _values, result)
             result = Toonrb::Nodes::Boolean.new(val[0])
 
@@ -592,7 +607,7 @@ module_eval(<<'.,.,', 'toon.y', 140)
   end
 .,.,
 
-module_eval(<<'.,.,', 'toon.y', 144)
+module_eval(<<'.,.,', 'toon.y', 151)
   def _reduce_59(val, _values, result)
             result = Toonrb::Nodes::Null.new(val[0])
 
@@ -600,7 +615,7 @@ module_eval(<<'.,.,', 'toon.y', 144)
   end
 .,.,
 
-module_eval(<<'.,.,', 'toon.y', 148)
+module_eval(<<'.,.,', 'toon.y', 155)
   def _reduce_60(val, _values, result)
             result = Toonrb::Nodes::Number.new(val[0])
 

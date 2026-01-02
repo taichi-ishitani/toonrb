@@ -2,10 +2,13 @@
 
 module Toonrb
   module Nodes
-    class Array
-      def initialize(size)
+    class Array < Base
+      def initialize(size, position)
+        super(position)
         @size = size
       end
+
+      attr_reader :position
 
       def push_value(value, tabular_field: false, tabular_value: false, head_value: false)
         if tabular_field

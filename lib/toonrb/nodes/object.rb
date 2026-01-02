@@ -2,7 +2,9 @@
 
 module Toonrb
   module Nodes
-    class Object
+    class Object < Base
+      attr_reader :position
+
       def push_value(value, key: false)
         if key
           (@keys ||= []) << value
@@ -14,11 +16,11 @@ module Toonrb
       def to_ruby
         @keys
           .zip(@values || [])
-          .to_h { |k, v| (v && [k.to_ruby, v.to_ruby]) || [k.to_ruby, {}] }
+          .to_h { |k, v| [k.to_ruby, v.to_ruby] }
       end
     end
 
-    class EmptyObject
+    class EmptyObject < Base
       def to_ruby
         {}
       end

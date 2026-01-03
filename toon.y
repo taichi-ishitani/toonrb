@@ -36,35 +36,29 @@ rule
         handler.pop
       }
   object_head_item
-    : object_head_key COLON eol {
-        position = scanner.current_position
-        handler.push_empty_object(position)
-      }
-    | object_head_key COLON primitive eol {
-        handler.push_value(val[2])
-      }
+    : object_head_key COLON object_value
     | object_head_key array
-    | object_head_key COLON array
-    | object_head_key COLON eol object_nested
   object_head_key
     : string {
         handler.push_object(val[0])
       }
   object_item
-    : object_key COLON eol {
-        position = scanner.current_position
-        handler.push_empty_object(position)
-      }
-    | object_key COLON primitive eol {
-        handler.push_value(val[2])
-      }
+    : object_key COLON object_value
     | object_key array
-    | object_key COLON array
-    | object_key COLON eol object_nested
   object_key
     : string {
         handler.push_value(val[0], key: true)
       }
+  object_value
+    : eol {
+        position = scanner.current_position
+        handler.push_empty_object(position)
+      }
+    | primitive eol {
+        handler.push_value(val[0])
+      }
+    | array
+    | eol object_nested
 
   array
     : array_header eol {

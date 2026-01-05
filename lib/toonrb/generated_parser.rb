@@ -6,7 +6,8 @@
 #
 
 require 'racc/parser.rb'
-class GeneratedParser < Racc::Parser
+module Toonrb
+  class GeneratedParser < Racc::Parser
 ##### State transition tables begin ###
 
 racc_action_table = [
@@ -685,7 +686,7 @@ module_eval(<<'.,.,', 'toon.y', 139)
 
 module_eval(<<'.,.,', 'toon.y', 149)
   def _reduce_71(val, _values, result)
-            result = Toonrb::Nodes::QuotedString.new(val[0])
+            result = Nodes::QuotedString.new(val[0])
 
     result
   end
@@ -693,7 +694,7 @@ module_eval(<<'.,.,', 'toon.y', 149)
 
 module_eval(<<'.,.,', 'toon.y', 152)
   def _reduce_72(val, _values, result)
-            result = Toonrb::Nodes::UnquotedString.new(val[0])
+            result = Nodes::UnquotedString.new(val[0])
 
     result
   end
@@ -701,7 +702,7 @@ module_eval(<<'.,.,', 'toon.y', 152)
 
 module_eval(<<'.,.,', 'toon.y', 156)
   def _reduce_73(val, _values, result)
-            result = Toonrb::Nodes::Boolean.new(val[0])
+            result = Nodes::Boolean.new(val[0])
 
     result
   end
@@ -709,7 +710,7 @@ module_eval(<<'.,.,', 'toon.y', 156)
 
 module_eval(<<'.,.,', 'toon.y', 160)
   def _reduce_74(val, _values, result)
-            result = Toonrb::Nodes::Null.new(val[0])
+            result = Nodes::Null.new(val[0])
 
     result
   end
@@ -717,7 +718,7 @@ module_eval(<<'.,.,', 'toon.y', 160)
 
 module_eval(<<'.,.,', 'toon.y', 164)
   def _reduce_75(val, _values, result)
-            result = Toonrb::Nodes::Number.new(val[0])
+            result = Nodes::Number.new(val[0])
 
     result
   end
@@ -725,7 +726,7 @@ module_eval(<<'.,.,', 'toon.y', 164)
 
 module_eval(<<'.,.,', 'toon.y', 168)
   def _reduce_76(val, _values, result)
-            result = Toonrb::Nodes::Blank.new(val[0])
+            result = Nodes::Blank.new(val[0])
 
     result
   end
@@ -735,4 +736,5 @@ def _reduce_none(val, _values, result)
   val[0]
 end
 
-end   # class GeneratedParser
+  end   # class GeneratedParser
+end   # module Toonrb

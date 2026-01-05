@@ -1,4 +1,4 @@
-class GeneratedParser
+class Toonrb::GeneratedParser
 token
   L_BRACKET
   R_BRACKET
@@ -147,24 +147,24 @@ rule
     | number
   string
     : QUOTED_STRING {
-        result = Toonrb::Nodes::QuotedString.new(val[0])
+        result = Nodes::QuotedString.new(val[0])
       }
     | UNQUOTED_STRING {
-        result = Toonrb::Nodes::UnquotedString.new(val[0])
+        result = Nodes::UnquotedString.new(val[0])
       }
   boolean
     : BOOLEAN {
-        result = Toonrb::Nodes::Boolean.new(val[0])
+        result = Nodes::Boolean.new(val[0])
       }
   null
     : NULL {
-        result = Toonrb::Nodes::Null.new(val[0])
+        result = Nodes::Null.new(val[0])
       }
   number
     : NUMBER {
-        result = Toonrb::Nodes::Number.new(val[0])
+        result = Nodes::Number.new(val[0])
       }
   blank
     : BLANK {
-        result = Toonrb::Nodes::Blank.new(val[0])
+        result = Nodes::Blank.new(val[0])
       }

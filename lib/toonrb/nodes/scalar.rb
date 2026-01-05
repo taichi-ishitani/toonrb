@@ -22,16 +22,22 @@ module Toonrb
     end
 
     class UnquotedString < Scalar
-      def concat(other_token)
-        token.text.concat(other_token.text)
-      end
-
       def to_ruby
         token.text.strip
       end
 
       def kind
         :unquoted_string
+      end
+    end
+
+    class EmptyString < Base
+      def to_ruby
+        ''
+      end
+
+      def kind
+        :empty_string
       end
     end
 

@@ -4,35 +4,37 @@ module Toonrb
   class Scanner
     include RaiseParseError
 
-    NL = /\n/
+    NL = / *\n/
 
     BLANK = /(?:^[ \t\n]*\n)|(?:^[ \t\n]+\z)/
 
     INDENT = /^[ \t]*/
 
-    L_BRACKET = /\[ */
+    WHITE_SPACES = / +/
 
-    R_BRACKET = /] */
+    L_BRACKET = /\[/
 
-    L_BRACE = /{ */
+    R_BRACKET = /]/
 
-    R_BRACE = /} */
+    L_BRACE = /{/
 
-    COLON = /: */
+    R_BRACE = /}/
+
+    COLON = /(?:: )|(?::$)/
 
     HYPHEN = /(?:- )|(?:-$)/
 
-    D_QUOTE = /" */
+    D_QUOTE = /"/
 
-    BACK_SLASH = /\\ */
+    BACK_SLASH = /\\/
 
-    DELIMITER = /[,\t|] */
+    DELIMITER = /[,\t|]/
 
-    BOOLEAN = /\A(?:true|false) *\Z/
+    BOOLEAN = /\A(?:true|false)\Z/
 
-    NULL = /\Anull *\Z/
+    NULL = /\Anull\Z/
 
-    NUMBER = /\A-?(?:0|[1-9]\d*)(?:\.\d+)?(?:e[+-]?\d+)? *\Z/i
+    NUMBER = /\A-?(?:0|[1-9]\d*)(?:\.\d+)?(?:e[+-]?\d+)?\Z/i
 
     def initialize(string, filename, strict, indent_size)
       @ss = StringScanner.new(string)
@@ -128,6 +130,11 @@ module Toonrb
       @ss.check(pattern)
     end
 
+    def skip(pattern)
+      text, _line, _column = scan(pattern)
+      text&.length
+    end
+
     def advance(char)
       @ss.pos += char.bytesize
       update_state(char)
@@ -172,7 +179,10 @@ module Toonrb
 
     def scan_nl
       text, line, column = scan(NL)
-      push_control_token(:NL, text, line, column)
+      return unless text
+
+      n_spaces = text.length - 1
+      push_control_token(:NL, text[-1], line, column + n_spaces)
     end
 
     def scan_blank
@@ -191,15 +201,15 @@ module Toonrb
     def scan_indent
       return if @column > 1 || eos?
 
-      indent, _line, _column = scan(INDENT)
+      indent = skip(INDENT)
       return unless indent
 
-      next_depth = calc_next_depth(indent.size)
+      next_depth = calc_next_depth(indent)
       update_indent_depth(next_depth)
     end
 
-    def calc_next_depth(n_spaces)
-      next_depth = (n_spaces / @indent_size).floor
+    def calc_next_depth(indent)
+      next_depth = (indent / @indent_size).floor
       return next_depth unless peek(HYPHEN)
 
       list_depth = @list_array_depth.find { |depth| (next_depth + 1) == depth }
@@ -260,6 +270,8 @@ module Toonrb
     end
 
     def scan_code_token
+      skip(WHITE_SPACES)
+
       token = scan_array_symbol
       return token if token
 

@@ -43,6 +43,34 @@ module Toonrb
       @stack.pop
     end
 
+    def quoted_string(token)
+      Nodes::QuotedString.new(token)
+    end
+
+    def unquoted_string(token)
+      Nodes::UnquotedString.new(token)
+    end
+
+    def empty_string(position)
+      Nodes::EmptyString.new(position)
+    end
+
+    def boolean(token)
+      Nodes::Boolean.new(token)
+    end
+
+    def null(token)
+      Nodes::Null.new(token)
+    end
+
+    def number(token)
+      Nodes::Number.new(token)
+    end
+
+    def blank(token)
+      Nodes::Blank.new(token)
+    end
+
     private
 
     def current

@@ -98,9 +98,12 @@ rule
         each_list_item(val) { |v, _| handler.push_value(v, tabular_field: true) }
       }
   inline_array_values
-    : primitive (DELIMITER primitive)* {
+    : inline_array_value (DELIMITER inline_array_value)* {
         each_list_item(val) { |v, _| handler.push_value(v) }
       }
+  inline_array_value
+    : primitive
+    | empty_string
   list_array_items
     : (list_array_start_item list_array_blank?) (list_array_item list_array_blank?)*
   list_array_start_item
@@ -135,6 +138,7 @@ rule
       }
   tabular_row_value
     : primitive
+    | empty_string
   tabular_blank
     : blank {
         handler.push_value(val[0], tabular_value: true, head_value: true)
@@ -147,24 +151,29 @@ rule
     | number
   string
     : QUOTED_STRING {
-        result = Nodes::QuotedString.new(val[0])
+        result = handler.quoted_string(val[0])
       }
     | UNQUOTED_STRING {
-        result = Nodes::UnquotedString.new(val[0])
+        result = handler.unquoted_string(val[0])
+      }
+  empty_string
+    : {
+        position = scanner.current_position
+        result = handler.empty_string(position)
       }
   boolean
     : BOOLEAN {
-        result = Nodes::Boolean.new(val[0])
+        result = handler.boolean(val[0])
       }
   null
     : NULL {
-        result = Nodes::Null.new(val[0])
+        result = handler.null(val[0])
       }
   number
     : NUMBER {
-        result = Nodes::Number.new(val[0])
+        result = handler.number(val[0])
       }
   blank
     : BLANK {
-        result = Nodes::Blank.new(val[0])
+        result = handler.blank(val[0])
       }

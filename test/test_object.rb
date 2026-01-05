@@ -234,5 +234,12 @@ module Toonrb
       JSON
       assert_equal(json, toon)
     end
+
+    def test_empty_document
+      toon = load_toon(<<~'TOON')
+
+      TOON
+      assert_equal({}, toon)
+    end
   end
 end

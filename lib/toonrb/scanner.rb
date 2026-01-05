@@ -201,15 +201,35 @@ module Toonrb
     def scan_indent
       return if @column > 1 || eos?
 
-      indent = skip(INDENT)
+      indent, line, column = scan(INDENT)
       return unless indent
+
+      check_tabs_in_indent(indent, line, column)
+      check_indent_spaces_size(indent, line, column)
 
       next_depth = calc_next_depth(indent)
       update_indent_depth(next_depth)
     end
 
+    def check_tabs_in_indent(indent, line, column)
+      return unless @strict && indent.include?("\t")
+
+      position = create_position(line, column)
+      raise_parse_error 'tabs are not allowed in indentation', position
+    end
+
+    def check_indent_spaces_size(indent, line, column)
+      return unless @strict && (indent.length % @indent_size).positive?
+
+      position = create_position(line, column)
+      message =
+        "indentation must be exact multiple of #{@indent_size.to_i}, " \
+        "but found #{indent.length} spaces"
+      raise_parse_error message, position
+    end
+
     def calc_next_depth(indent)
-      next_depth = (indent / @indent_size).floor
+      next_depth = (indent.length / @indent_size).floor
       return next_depth unless peek(HYPHEN)
 
       list_depth = @list_array_depth.find { |depth| (next_depth + 1) == depth }

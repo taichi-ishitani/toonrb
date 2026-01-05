@@ -25,7 +25,7 @@ module Toonrb
       json = <<~'JSON'
         {"a":{"b":1}}
       JSON
-      assert_equal(load_json(json), load_toon(toon, strict: false))
+      assert_equal(load_json(json), decode_toon(toon, strict: false))
 
       toon = <<~'TOON'
         a:
@@ -35,7 +35,7 @@ module Toonrb
       json = <<~'JSON'
         {"a":{"b":{"c":1}}}
       JSON
-      assert_equal(load_json(json), load_toon(toon, strict: false))
+      assert_equal(load_json(json), decode_toon(toon, strict: false))
     end
 
     def test_custom_indent_size
@@ -46,7 +46,7 @@ module Toonrb
       json = <<~'JSON'
         {"a": {"b": 1}}
       JSON
-      assert_equal(load_json(json), load_toon(toon, indent_size: 4))
+      assert_equal(load_json(json), decode_toon(toon, indent_size: 4))
 
       toon = <<~'TOON'
         a:
@@ -62,7 +62,7 @@ module Toonrb
       json = <<~'JSON'
         {"items": [{"id":1},{"id":2}]}
       JSON
-      assert_equal(load_json(json), load_toon(toon, indent_size: 4))
+      assert_equal(load_json(json), decode_toon(toon, indent_size: 4))
 
       toon = <<~'TOON'
         items[2]:
@@ -96,7 +96,7 @@ module Toonrb
       json = <<~'JSON'
         {"text":"hello\tworld"}
       JSON
-      assert_equal(load_json(json), load_toon(toon))
+      assert_equal(load_json(json), decode_toon(toon))
 
       toon = <<~'TOON'
         "key	tab": value
@@ -104,7 +104,7 @@ module Toonrb
       json = <<~'JSON'
         {"key\ttab":"value"}
       JSON
-      assert_equal(load_json(json), load_toon(toon))
+      assert_equal(load_json(json), decode_toon(toon))
 
       toon = <<~'TOON'
         items[2]: "a	b","c	d"
@@ -112,7 +112,7 @@ module Toonrb
       json = <<~'JSON'
         {"items":["a\tb","c\td"]}
       JSON
-      assert_equal(load_json(json), load_toon(toon))
+      assert_equal(load_json(json), decode_toon(toon))
     end
   end
 end

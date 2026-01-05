@@ -11,7 +11,7 @@ module Toonrb
       json = <<~'JSON'
         {"a":{"b":{"c":1}}}
       JSON
-      assert_equal(load_json(json), load_toon(toon, path_expansion: true))
+      assert_equal(load_json(json), decode_toon(toon, path_expansion: true))
 
       toon = <<~'TOON'
         data.meta.items[2]: a,b
@@ -19,7 +19,7 @@ module Toonrb
       json = <<~'JSON'
         {"data":{"meta":{"items":["a","b"]}}}
       JSON
-      assert_equal(load_json(json), load_toon(toon, path_expansion: true))
+      assert_equal(load_json(json), decode_toon(toon, path_expansion: true))
 
       toon = <<~'TOON'
         a.b.items[2]{id,name}:
@@ -29,7 +29,7 @@ module Toonrb
       json = <<~'JSON'
         {"a":{"b":{"items":[{"id":1,"name":"A"},{"id":2,"name":"B"}]}}}
       JSON
-      assert_equal(load_json(json), load_toon(toon, path_expansion: true))
+      assert_equal(load_json(json), decode_toon(toon, path_expansion: true))
 
       toon = <<~'TOON'
         a.b.c: 1
@@ -39,7 +39,7 @@ module Toonrb
       json = <<~'JSON'
         {"a":{"b":{"c":1,"d":2},"e":3}}
       JSON
-      assert_equal(load_json(json), load_toon(toon, path_expansion: true))
+      assert_equal(load_json(json), decode_toon(toon, path_expansion: true))
 
       toon = <<~'TOON'
         a.b.c:
@@ -47,7 +47,7 @@ module Toonrb
       json = <<~'JSON'
         {"a":{"b":{"c":{}}}}
       JSON
-      assert_equal(load_json(json), load_toon(toon, path_expansion: true))
+      assert_equal(load_json(json), decode_toon(toon, path_expansion: true))
     end
 
     def test_expansion_off
@@ -57,7 +57,7 @@ module Toonrb
       json = <<~'JSON'
         {"user.name":"Ada"}
       JSON
-      assert_equal(load_json(json), load_toon(toon))
+      assert_equal(load_json(json), decode_toon(toon))
     end
 
     def test_unexpandable_key
@@ -68,7 +68,7 @@ module Toonrb
       json = <<~'JSON'
         {"a":{"b":1},"c.d":2}
       JSON
-      assert_equal(load_json(json), load_toon(toon, path_expansion: true))
+      assert_equal(load_json(json), decode_toon(toon, path_expansion: true))
 
       toon = <<~'TOON'
         full-name.x: 1
@@ -76,7 +76,7 @@ module Toonrb
       json = <<~'JSON'
         {"full-name.x":1}
       JSON
-      assert_equal(load_json(json), load_toon(toon, path_expansion: true))
+      assert_equal(load_json(json), decode_toon(toon, path_expansion: true))
     end
 
     def test_key_conflict
@@ -101,7 +101,7 @@ module Toonrb
       json = <<~'JSON'
         {"a":2}
       JSON
-      assert_equal(load_json(json), load_toon(toon, path_expansion: true, strict: false))
+      assert_equal(load_json(json), decode_toon(toon, path_expansion: true, strict: false))
 
       toon = <<~'TOON'
         a: 1
@@ -110,7 +110,7 @@ module Toonrb
       json = <<~'JSON'
         {"a":{"b":2}}
       JSON
-      assert_equal(load_json(json), load_toon(toon, path_expansion: true, strict: false))
+      assert_equal(load_json(json), decode_toon(toon, path_expansion: true, strict: false))
     end
   end
 end

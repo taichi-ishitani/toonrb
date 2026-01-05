@@ -61,7 +61,7 @@ module Toonrb
       json = <<~'JSON'
         {"items":["a","b","c"]}
       JSON
-      assert_equal(load_json(json), load_toon(toon, strict: false))
+      assert_equal(load_json(json), decode_toon(toon, strict: false))
 
       toon = <<~'TOON'
         items[2]{id,name}:
@@ -72,7 +72,7 @@ module Toonrb
       json = <<~'JSON'
         {"items":[{"id":1,"name":"Alice"},{"id":2,"name":"Bob"}]}
       JSON
-      assert_equal(load_json(json), load_toon(toon, strict: false))
+      assert_equal(load_json(json), decode_toon(toon, strict: false))
 
       toon = <<~'TOON'
         items[2]:
@@ -84,7 +84,7 @@ module Toonrb
       json = <<~'JSON'
         {"items":["a","b"]}
       JSON
-      assert_equal(load_json(json), load_toon(toon, strict: false))
+      assert_equal(load_json(json), decode_toon(toon, strict: false))
     end
 
     def test_blank_lines_outside_array
@@ -96,7 +96,7 @@ module Toonrb
       json = <<~'JSON'
         {"a":1,"b":2}
       JSON
-      assert_equal(load_json(json), load_toon(toon))
+      assert_equal(load_json(json), decode_toon(toon))
 
       toon = <<~'TOON'
         a: 1
@@ -105,7 +105,7 @@ module Toonrb
       json = <<~'JSON'
         {"a":1}
       JSON
-      assert_equal(load_json(json), load_toon(toon))
+      assert_equal(load_json(json), decode_toon(toon))
 
       toon = <<~'TOON'
         a: 1
@@ -117,7 +117,7 @@ module Toonrb
       json = <<~'JSON'
         {"a":1}
       JSON
-      assert_equal(load_json(json), load_toon(toon))
+      assert_equal(load_json(json), decode_toon(toon))
 
       toon = <<~'TOON'
         items[1]:
@@ -128,7 +128,7 @@ module Toonrb
       json = <<~'JSON'
         {"items":["a"],"b":2}
       JSON
-      assert_equal(load_json(json), load_toon(toon))
+      assert_equal(load_json(json), decode_toon(toon))
 
       toon = <<~'TOON'
         a:
@@ -139,7 +139,7 @@ module Toonrb
       json = <<~'JSON'
         {"a":{"b":1,"c":2}}
       JSON
-      assert_equal(load_json(json), load_toon(toon))
+      assert_equal(load_json(json), decode_toon(toon))
 
       toon = <<~'TOON'
         a:
@@ -150,7 +150,7 @@ module Toonrb
       json = <<~'JSON'
         {"a":{"b":1,"c":2}}
       JSON
-      assert_equal(load_json(json), load_toon(toon))
+      assert_equal(load_json(json), decode_toon(toon))
     end
   end
 end

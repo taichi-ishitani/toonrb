@@ -5,7 +5,7 @@ require_relative 'test_helper'
 module Toonrb
   class TestObject < TestCase
     def test_object
-      toon = load_toon(<<~'TOON')
+      toon = decode_toon(<<~'TOON')
         id: 123
         name: Ada
         active: true
@@ -15,7 +15,7 @@ module Toonrb
       JSON
       assert_equal(json, toon)
 
-      toon = load_toon(<<~'TOON')
+      toon = decode_toon(<<~'TOON')
         id: 123
         value: null
       TOON
@@ -24,7 +24,7 @@ module Toonrb
       JSON
       assert_equal(json, toon)
 
-      toon = load_toon(<<~'TOON')
+      toon = decode_toon(<<~'TOON')
         user:
       TOON
       json = load_json(<<~'JSON')
@@ -32,7 +32,7 @@ module Toonrb
       JSON
       assert_equal(json, toon)
 
-      toon = load_toon(<<~'TOON')
+      toon = decode_toon(<<~'TOON')
         note: "a:b"
       TOON
       json = load_json(<<~'JSON')
@@ -40,7 +40,7 @@ module Toonrb
       JSON
       assert_equal(json, toon)
 
-      toon = load_toon(<<~'TOON')
+      toon = decode_toon(<<~'TOON')
         note: "a,b"
       TOON
       json = load_json(<<~'JSON')
@@ -48,7 +48,7 @@ module Toonrb
       JSON
       assert_equal(json, toon)
 
-      toon = load_toon(<<~'TOON')
+      toon = decode_toon(<<~'TOON')
         text: "line1\nline2"
       TOON
       json = load_json(<<~'JSON')
@@ -56,7 +56,7 @@ module Toonrb
       JSON
       assert_equal(json, toon)
 
-      toon = load_toon(<<~'TOON')
+      toon = decode_toon(<<~'TOON')
         text: "say \"hello\""
       TOON
       json = load_json(<<~'JSON')
@@ -64,7 +64,7 @@ module Toonrb
       JSON
       assert_equal(json, toon)
 
-      toon = load_toon(<<~'TOON')
+      toon = decode_toon(<<~'TOON')
         text: " padded "
       TOON
       json = load_json(<<~'JSON')
@@ -72,7 +72,7 @@ module Toonrb
       JSON
       assert_equal(json, toon)
 
-      toon = load_toon(<<~'TOON')
+      toon = decode_toon(<<~'TOON')
         text: "  "
       TOON
       json = load_json(<<~'JSON')
@@ -80,7 +80,7 @@ module Toonrb
       JSON
       assert_equal(json, toon)
 
-      toon = load_toon(<<~'TOON')
+      toon = decode_toon(<<~'TOON')
         v: "true"
       TOON
       json = load_json(<<~'JSON')
@@ -88,7 +88,7 @@ module Toonrb
       JSON
       assert_equal(json, toon)
 
-      toon = load_toon(<<~'TOON')
+      toon = decode_toon(<<~'TOON')
         v: "42"
       TOON
       json = load_json(<<~'JSON')
@@ -96,7 +96,7 @@ module Toonrb
       JSON
       assert_equal(json, toon)
 
-      toon = load_toon(<<~'TOON')
+      toon = decode_toon(<<~'TOON')
         v: "-7.5"
       TOON
       json = load_json(<<~'JSON')
@@ -104,7 +104,7 @@ module Toonrb
       JSON
       assert_equal(json, toon)
 
-      toon = load_toon(<<~'TOON')
+      toon = decode_toon(<<~'TOON')
         "order:id": 7
       TOON
       json = load_json(<<~'JSON')
@@ -112,7 +112,7 @@ module Toonrb
       JSON
       assert_equal(json, toon)
 
-      toon = load_toon(<<~'TOON')
+      toon = decode_toon(<<~'TOON')
         "[index]": 5
       TOON
       json = load_json(<<~'JSON')
@@ -120,7 +120,7 @@ module Toonrb
       JSON
       assert_equal(json, toon)
 
-      toon = load_toon(<<~'TOON')
+      toon = decode_toon(<<~'TOON')
         "{key}": 5
       TOON
       json = load_json(<<~'JSON')
@@ -128,7 +128,7 @@ module Toonrb
       JSON
       assert_equal(json, toon)
 
-      toon = load_toon(<<~'TOON')
+      toon = decode_toon(<<~'TOON')
         "a,b": 1
       TOON
       json = load_json(<<~'JSON')
@@ -136,7 +136,7 @@ module Toonrb
       JSON
       assert_equal(json, toon)
 
-      toon = load_toon(<<~'TOON')
+      toon = decode_toon(<<~'TOON')
         "full name": Ada
       TOON
       json = load_json(<<~'JSON')
@@ -144,7 +144,7 @@ module Toonrb
       JSON
       assert_equal(json, toon)
 
-      toon = load_toon(<<~'TOON')
+      toon = decode_toon(<<~'TOON')
         "-lead": 1
       TOON
       json = load_json(<<~'JSON')
@@ -152,7 +152,7 @@ module Toonrb
       JSON
       assert_equal(json, toon)
 
-      toon = load_toon(<<~'TOON')
+      toon = decode_toon(<<~'TOON')
         " a ": 1
       TOON
       json = load_json(<<~'JSON')
@@ -160,7 +160,7 @@ module Toonrb
       JSON
       assert_equal(json, toon)
 
-      toon = load_toon(<<~'TOON')
+      toon = decode_toon(<<~'TOON')
         "123": x
       TOON
       json = load_json(<<~'JSON')
@@ -168,7 +168,7 @@ module Toonrb
       JSON
       assert_equal(json, toon)
 
-      toon = load_toon(<<~'TOON')
+      toon = decode_toon(<<~'TOON')
         "": 1
       TOON
       json = load_json(<<~'JSON')
@@ -176,7 +176,7 @@ module Toonrb
       JSON
       assert_equal(json, toon)
 
-      toon = load_toon(<<~'TOON')
+      toon = decode_toon(<<~'TOON')
         user.name: Ada
       TOON
       json = load_json(<<~'JSON')
@@ -184,7 +184,7 @@ module Toonrb
       JSON
       assert_equal(json, toon)
 
-      toon = load_toon(<<~'TOON')
+      toon = decode_toon(<<~'TOON')
         _private: 1
       TOON
       json = load_json(<<~'JSON')
@@ -192,7 +192,7 @@ module Toonrb
       JSON
       assert_equal(json, toon)
 
-      toon = load_toon(<<~'TOON')
+      toon = decode_toon(<<~'TOON')
         user_name: 1
       TOON
       json = load_json(<<~'JSON')
@@ -200,7 +200,7 @@ module Toonrb
       JSON
       assert_equal(json, toon)
 
-      toon = load_toon(<<~'TOON')
+      toon = decode_toon(<<~'TOON')
         "line\nbreak": 1
       TOON
       json = load_json(<<~'JSON')
@@ -208,7 +208,7 @@ module Toonrb
       JSON
       assert_equal(json, toon)
 
-      toon = load_toon(<<~'TOON')
+      toon = decode_toon(<<~'TOON')
         "tab\there": 2
       TOON
       json = load_json(<<~'JSON')
@@ -216,7 +216,7 @@ module Toonrb
       JSON
       assert_equal(json, toon)
 
-      toon = load_toon(<<~'TOON')
+      toon = decode_toon(<<~'TOON')
         "he said \"hi\"": 1
       TOON
       json = load_json(<<~'JSON')
@@ -224,7 +224,7 @@ module Toonrb
       JSON
       assert_equal(json, toon)
 
-      toon = load_toon(<<~'TOON')
+      toon = decode_toon(<<~'TOON')
         a:
           b:
             c: deep
@@ -236,7 +236,7 @@ module Toonrb
     end
 
     def test_empty_document
-      toon = load_toon(<<~'TOON')
+      toon = decode_toon(<<~'TOON')
 
       TOON
       assert_equal({}, toon)

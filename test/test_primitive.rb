@@ -5,24 +5,24 @@ require_relative 'test_helper'
 module Toonrb
   class TestPrimitive < TestCase
     def test_true
-      assert_equal(load_json('true'), load_toon('true'))
+      assert_equal(load_json('true'), decode_toon('true'))
     end
 
     def test_false
-      assert_equal(load_json('false'), load_toon('false'))
+      assert_equal(load_json('false'), decode_toon('false'))
     end
 
     def test_null
-      assert_nil(load_toon('null'))
+      assert_nil(decode_toon('null'))
     end
 
     def test_integer
       100.times do |i|
-        result = load_toon("#{i}")
+        result = decode_toon("#{i}")
         assert_equal(i, result)
         assert_instance_of(::Integer, result)
 
-        result = load_toon("-#{i}")
+        result = decode_toon("-#{i}")
         assert_equal(-i, result)
         assert_instance_of(::Integer, result)
       end
@@ -34,7 +34,7 @@ module Toonrb
         '-0.0' => 0, '0.0' => 0, '1e-10' => 0.0000000001, '5E+00' => 5,
         '1e6' => 1000000, '1E+6' => 1000000, '-1e-3' => -0.001
       }.each do |toon, number|
-        result = load_toon(toon)
+        result = decode_toon(toon)
         assert_equal(number, result)
         assert_instance_of(number.class, result)
       end
@@ -45,7 +45,7 @@ module Toonrb
         'hello', 'Ada_99', 'café', '你好', '🚀', 'hello 👋 world',
         '05', '007', '0123'
       ].each do |string|
-        assert_equal(string, load_toon(string))
+        assert_equal(string, decode_toon(string))
       end
     end
 
@@ -59,7 +59,7 @@ module Toonrb
           c = { "\n" => 'n', "\r" => 'r', "\t" => 't', '"' => '"', '\\' => '\\' }[c]
           "\\#{c}"
         end
-        result = load_toon("\"#{escaped_string}\"")
+        result = decode_toon("\"#{escaped_string}\"")
         assert_equal(string, result)
       end
     end

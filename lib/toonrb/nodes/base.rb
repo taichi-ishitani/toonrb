@@ -59,7 +59,7 @@ module Toonrb
           end
         return unless blank
 
-        position = @values[blank]
+        position = @values[blank].position
         raise_parse_error "blank lines inside #{kind} are not allowed", position
       end
 

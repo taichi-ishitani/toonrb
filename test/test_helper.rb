@@ -17,7 +17,7 @@ module Toonrb
     end
 
     def assert_parse_error(toon, message = nil, **)
-      error = assert_raises(ParseError, Racc::ParseError) do
+      error = assert_raises(ParseError) do
         decode_toon(toon, **)
       end
       message && assert_equal(message, error.error_message)

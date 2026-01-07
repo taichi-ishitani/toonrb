@@ -130,6 +130,10 @@ module Toonrb
       @ss.check(pattern)
     end
 
+    def peek_char
+      peek(/./)
+    end
+
     def skip(pattern)
       text, _line, _column = scan(pattern)
       text&.length
@@ -319,16 +323,23 @@ module Toonrb
       column = @column
 
       buffer = []
-      while (char = scan_char)
+      last_char = nil
+      while (char = peek_char)
+        break if char == "\n"
+
+        advance(char)
         if char == '\\' && (escaped_char = scan_escaped_char)
           buffer << escaped_char
+          last_char = [escaped_char, true]
         else
           buffer << char
+          last_char = [char, false]
           break if buffer.size >= 2 && char == '"'
         end
       end
 
-      if buffer.size < 2 || buffer.last != '"'
+      # last char should be non-escaped double quort
+      if buffer.size < 2 || last_char != ['"', false]
         position = create_position(@line, @column)
         raise_parse_error 'missing closing quote', position
       end
@@ -354,7 +365,7 @@ module Toonrb
       column = @column
 
       buffer = []
-      while (char = peek(/./))
+      while (char = peek_char)
         break unless valid_unquoted_char?(char)
 
         advance(char)

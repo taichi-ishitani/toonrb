@@ -72,6 +72,17 @@ module Toonrb
         "unterminated
       TOON
       assert_parse_error(toon, 'missing closing quote')
+
+      toon = <<~'TOON'
+        "unterminated\"
+      TOON
+      assert_parse_error(toon, 'missing closing quote')
+
+      toon = <<~'TOON'
+        "unterminated
+        "
+      TOON
+      assert_parse_error(toon, 'missing closing quote')
     end
 
     def test_missing_colon

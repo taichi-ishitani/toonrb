@@ -14,6 +14,8 @@ end
 
 group 'development_test' do
   gem 'minitest', require: false
+  gem 'simplecov', '~> 0.22.0', require: false
+  gem 'simplecov-cobertura', '~> 3.1.0', require: false
 end
 
 group 'development_lint' do

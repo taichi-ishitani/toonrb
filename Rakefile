@@ -3,7 +3,15 @@
 require 'bundler/gem_tasks'
 require 'minitest/test_task'
 
-Minitest::TestTask.create
+Minitest::TestTask.create :test do |t|
+  t.test_prelude = 'require "simplecov_prelude"'
+end
+
+desc 'Run the testsuite and collect code coverage'
+task :coverage do
+  ENV['COVERAGE'] = 'yes'
+  Rake::Task['test'].execute
+end
 
 unless ENV.key?('CI')
   require 'rubocop/rake_task'

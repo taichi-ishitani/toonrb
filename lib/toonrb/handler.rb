@@ -54,11 +54,6 @@ module Toonrb
       push_value(object)
     end
 
-    def push_empty_array(position)
-      array = Nodes::EmptyArray.new(position)
-      push_value(array)
-    end
-
     def pop
       @stack.pop
     end

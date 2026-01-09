@@ -12,7 +12,7 @@ module Toonrb
         @fields = fields
       end
 
-      def validate(strict:)
+      def validate(strict: true)
         if @fields
           validate_tabular_array(strict)
         else
@@ -20,14 +20,13 @@ module Toonrb
         end
       end
 
-      def to_ruby(**optargs)
+      def to_ruby(symbolize_names: false, **optargs)
         values = non_blank_values
         result =
           if tabular?
-            fields = values_to_ruby(@fields, **optargs)
-            values&.map { |row| fields.zip(row.to_ruby(**optargs)).to_h }
+            to_ruby_tabular(values, symbolize_names, **optargs)
           else
-            values&.map { |value| value.to_ruby(**optargs) }
+            to_ruby_list(values, symbolize_names, **optargs)
           end
         result || []
       end
@@ -74,8 +73,21 @@ module Toonrb
         end
       end
 
-      def values_to_ruby(values, **optargs)
-        values&.map { |value| value.to_ruby(**optargs) }
+      def to_ruby_tabular(rows, symbolize_names, **optargs)
+        return unless rows
+
+        fields = to_ruby_list(@fields, symbolize_names, **optargs)
+        fields.map!(&:to_sym) if symbolize_names
+
+        rows.map do |row|
+          fields
+            .zip(row.to_ruby(symbolize_names:, **optargs))
+            .to_h
+        end
+      end
+
+      def to_ruby_list(values, symbolize_names, **optargs)
+        values&.map { |value| value.to_ruby(symbolize_names:, **optargs) }
       end
     end
 

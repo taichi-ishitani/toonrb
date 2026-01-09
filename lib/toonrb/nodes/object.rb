@@ -3,7 +3,7 @@
 module Toonrb
   module Nodes
     class Object < StructureBase
-      def validate(strict:)
+      def validate(strict: true)
         check_blank(strict, 'array')
         each_key_value do |key, value|
           key.validate(strict:)
@@ -11,9 +11,9 @@ module Toonrb
         end
       end
 
-      def to_ruby(strict: true, path_expansion: false)
+      def to_ruby(symbolize_names: false, strict: true, path_expansion: false)
         each_key_value.with_object({}) do |(key, value), result|
-          build_result(result, key, value, strict, path_expansion)
+          build_result(result, key, value, symbolize_names, strict, path_expansion)
         end
       end
 
@@ -31,20 +31,27 @@ module Toonrb
         end
       end
 
-      def build_result(result, key, value, strict, path_expansion)
-        k = key.to_ruby(strict:, path_expansion:)
-        v = value.to_ruby(strict:, path_expansion:)
+      def build_result(
+        result, key, value,
+        symbolize_names, strict, path_expansion
+      )
+        k = key.to_ruby(symbolize_names:, strict:, path_expansion:)
+        v = value.to_ruby(symbolize_names:, strict:, path_expansion:)
 
-        paths = split_path(key, k, path_expansion)
+        paths = split_path(key, k, symbolize_names, path_expansion)
         insert_value(result, paths, v, strict, key.position)
       end
 
-      def split_path(key_node, key, path_expansion)
-        if path_expansion && expandable_key?(key_node, key)
-          key.split('.')
-        else
-          [key]
-        end
+      def split_path(key_node, key, symbolize_names, path_expansion)
+        paths =
+          if path_expansion && expandable_key?(key_node, key)
+            key.split('.')
+          else
+            [key]
+          end
+
+        paths.map!(&:to_sym) if symbolize_names
+        paths
       end
 
       def expandable_key?(key_node, key)

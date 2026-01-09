@@ -26,7 +26,7 @@ module Toonrb
         M
       end
 
-      def validate(strict: true, path_expansion: false)
+      def validate(strict: true)
       end
     end
 

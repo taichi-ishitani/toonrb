@@ -12,8 +12,8 @@ module Toonrb
       Toonrb.decode(toon, **)
     end
 
-    def load_json(json)
-      JSON.load(json)
+    def load_json(json, **)
+      JSON.parse(json, **)
     end
 
     def assert_parse_error(toon, message = nil, **)

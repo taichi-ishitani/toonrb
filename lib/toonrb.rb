@@ -18,7 +18,11 @@ require_relative 'toonrb/parser'
 
 module Toonrb
   class << self
-    def decode(string_or_io, filename: nil, strict: true, path_expansion: false, indent_size: 2)
+    def decode(
+      string_or_io,
+      filename: nil, symbolize_names: false,
+      strict: true, path_expansion: false, indent_size: 2
+    )
       toon =
         if string_or_io.is_a?(String)
           string_or_io
@@ -32,7 +36,7 @@ module Toonrb
 
       output = parser.parse
       output.validate(strict:)
-      output.to_ruby(strict:, path_expansion:)
+      output.to_ruby(symbolize_names:, strict:, path_expansion:)
     end
   end
 end

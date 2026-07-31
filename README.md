@@ -2,7 +2,7 @@
 [![Regression](https://github.com/taichi-ishitani/rbtoon/actions/workflows/regression.yml/badge.svg)](https://github.com/taichi-ishitani/rbtoon/actions/workflows/regression.yml)
 [![codecov](https://codecov.io/gh/taichi-ishitani/rbtoon/graph/badge.svg?token=P35M7RTL3W)](https://codecov.io/gh/taichi-ishitani/rbtoon)
 
-[![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/A0A231E3I)
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/A0A231E3I)
 
 # RbToon
 
